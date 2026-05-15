@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EBS - My Request</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style-site.css"/>
+</head>
+<body>
+
+<nav>
+  <div class="logo">ε<span style="font-size:1.5rem">β</span><span style="font-size:1.1rem;vertical-align:sub">s</span></div>
+  <div class="search-wrap">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input type="text" placeholder="search..."/>
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">HOME</a></li>
+    <li><a href="#">BROWSE</a></li>
+    <li><a href="#" class="active">MY REQ</a></li>
+    <li><a href="#">HISTORY</a></li>
+  </ul>
+  <button class="avatar-btn" title="Profile">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="4"/>
+      <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+    </svg>
+  </button>
+</nav>
+
+<div class="page-header">
+  <h1 class="page-title">MY REQUEST</h1>
+  <a href="#" class="view-req-btn" onclick="showToast('Viewing your requests…'); return false;">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+    </svg>
+    VIEW MY REQ
+  </a>
+</div>
+
+<main>
+  <div class="section-title">Request</div>
+
+  <div class="request-card">
+
+    <div class="item-image-col">
+      <div class="item-id-label">ITEM ID: SPT001</div>
+    </div>
+
+    <div class="item-details-col">
+      <div class="item-meta">
+        <div class="item-meta-left">
+          <div class="item-id-text">SPT001</div>
+          <div class="item-category">Sports Equipment &gt; Volleyball</div>
+          <div class="item-status"><span class="dot"></span> Available</div>
+          <div class="item-condition">Condition: Good</div>
+        </div>
+        <div class="item-meta-right">
+          <div class="user-name">User U. User</div>
+          <div class="user-role">Student</div>
+          <div class="user-email">Ty12341234@wmsu.edu.ph</div>
+        </div>
+      </div>
+
+      <table class="info-table">
+        <tr>
+          <td>Borrow Date:</td>
+          <td><input type="date" id="borrowDate" value="2026-05-10"/></td>
+        </tr>
+        <tr>
+          <td>Return Date:</td>
+          <td><input type="date" id="returnDate"/></td>
+        </tr>
+        <tr>
+          <td>Purpose Of Borrowing:</td>
+          <td><input type="text" id="purpose" placeholder="Enter purpose…"/></td>
+        </tr>
+        <tr>
+          <td>Eligibility Status:</td>
+          <td id="eligibilityCell">Eligible To Borrow</td>
+        </tr>
+      </table>
+
+      <div class="policy-check">
+        <input type="checkbox" id="policyCheck"/>
+        <label for="policyCheck">I Agree To Follow The Borrowing Policies.</label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Submit</button>
+        <button class="btn-cancel" id="cancelBtn" onclick="handleCancel()">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <span>return items on time</span>
+  <span>handle equipment properly</span>
+  <span>damaged items may result in penalties</span>
+</footer>
+
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <h2>Cancel Request?</h2>
+    <p>Are you sure you want to cancel this borrowing request? This action cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="modal-confirm" onclick="confirmCancel()">Yes, Cancel</button>
+      <button class="modal-dismiss" onclick="closeModal()">Go Back</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="site.js"></script>
+</body>
+</html>

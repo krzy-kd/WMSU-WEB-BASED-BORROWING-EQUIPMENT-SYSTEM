@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Inventory Management - Equipment Borrowing System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="item.css"/>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">EB</div>
+    <div class="logo-text">EQUIPMENT<br>BORROWING<br>SYSTEM</div>
+  </div>
+  <nav>
+    <button class="nav-item"        onclick="setActive(this,'dashboard')">Dashboard</button>
+    <button class="nav-item"        onclick="setActive(this,'users')">User Management</button>
+    <button class="nav-item active" onclick="setActive(this,'inventory')">Inventory Management</button>
+    <button class="nav-item"        onclick="setActive(this,'borrow-req')">Borrow Request</button>
+    <button class="nav-item"        onclick="setActive(this,'borrow-mon')">Borrow Monitoring</button>
+    <button class="nav-item"        onclick="setActive(this,'logs')">System Logs</button>
+    <button class="nav-item"        onclick="setActive(this,'reports')">Reports And Analytics</button>
+    <button class="nav-item"        onclick="setActive(this,'announcements')">Announcements</button>
+    <button class="nav-item"        onclick="setActive(this,'settings')">Settings</button>
+    <button class="nav-item"        onclick="confirmLogout()">Log Out</button>
+  </nav>
+</aside>
+
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div>
+      <div class="page-title">Inventory Management</div>
+      <div class="breadcrumb">Inventory Management &gt;</div>
+    </div>
+    <div class="topbar-right">
+      <div class="notif-badge">
+        <button class="icon-btn" onclick="toggleNotif()" title="Notifications">&#128276;</button>
+        <span class="notif-dot" id="notifDot"></span>
+      </div>
+      <button class="icon-btn" title="Profile">&#128100;</button>
+      <span class="admin-label">SUPER ADMIN</span>
+    </div>
+  </div>
+
+  <!-- NOTIFICATION PANEL -->
+  <div class="notif-panel" id="notifPanel">
+    <h4>Notifications</h4>
+    <div class="notif-item">📋 New borrow request submitted.</div>
+    <div class="notif-item">⚠️ Football marked as damaged.</div>
+    <div class="notif-item">✅ Volleyball returned successfully.</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- STAT CARDS -->
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Equipment</div>
+        <div class="stat-value" id="statTotal">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Available Items</div>
+        <div class="stat-value" id="statAvailable">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Borrowed Items</div>
+        <div class="stat-value" id="statBorrowed">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Damaged Items</div>
+        <div class="stat-value" id="statDamaged">1</div>
+      </div>
+    </div>
+
+    <!-- ADD BUTTON -->
+    <button class="add-btn" onclick="openAddModal()">+ Add Equipment</button>
+
+    <!-- EQUIPMENT LIST -->
+    <div class="equipment-list" id="equipmentList"></div>
+
+  </div>
+</div>
+
+<!-- ADD / EDIT MODAL -->
+<div class="modal-overlay" id="formModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('formModal')">&times;</button>
+    <h2 id="formModalTitle">Add Equipment</h2>
+    <label>Equipment Name</label>
+    <input type="text"   id="inputName"     placeholder="e.g. Volleyball"/>
+    <label>Category</label>
+    <input type="text"   id="inputCategory" placeholder="e.g. Sports Equipment"/>
+    <label>Total Items</label>
+    <input type="number" id="inputTotal"    min="1" value="1"/>
+    <label>Available Items</label>
+    <input type="number" id="inputAvail"    min="0" value="1"/>
+    <div class="modal-actions">
+      <button class="btn-cancel"  onclick="closeModal('formModal')">Cancel</button>
+      <button class="btn-confirm" id="formConfirmBtn" onclick="saveEquipment()">Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- DELETE CONFIRM MODAL -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal" style="width:340px">
+    <button class="modal-close" onclick="closeModal('deleteModal')">&times;</button>
+    <h2>Delete Item</h2>
+    <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?
+       You will have <strong>5 seconds</strong> to undo this action.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal('deleteModal')">Cancel</button>
+      <button class="btn-danger" onclick="confirmDelete()">Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGOUT CONFIRM MODAL -->
+<div class="modal-overlay" id="logoutModal">
+  <div class="modal" style="width:320px">
+    <button class="modal-close" onclick="closeModal('logoutModal')">&times;</button>
+    <h2>Log Out</h2>
+    <p>Are you sure you want to log out?</p>
+    <div class="modal-actions">
+      <button class="btn-cancel"  onclick="closeModal('logoutModal')">Cancel</button>
+      <button class="btn-confirm" onclick="closeModal('logoutModal'); showToast('Logged out successfully.','success')">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<div class="undo-toast" id="undoToast">
+  <span id="undoMsg">"Item" deleted.</span>
+  <button class="undo-btn" onclick="undoDelete()">↩ Undo</button>
+  <div class="undo-progress"></div>
+</div>
+
+<!-- REGULAR TOAST (bottom-right) -->
+<div class="toast" id="toast"></div>
+
+
+
+<script src="itemjs.js"></script>
+
+</body>
+</html>
