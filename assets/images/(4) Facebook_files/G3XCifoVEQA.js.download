@@ -1,4 +1,0 @@
-;/*FB_PKG_DELIM*/
-
-__d("FBNucleusListBulletFilled20Icon.react",["react"],(function(t,n,r,o,a,i,l){"use strict";var e,s=e||(e=o("react"));function u(e){return s.jsxs("svg",babelHelpers.extends({viewBox:"0 0 20 20",width:"1em",height:"1em",fill:"currentColor"},e,{children:[e.title!=null&&s.jsx("title",{children:e.title}),e.children!=null&&s.jsx("defs",{children:e.children}),s.jsx("path",{d:"M3.5 5.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM7.75 3a1 1 0 0 0 0 2h9.5a1 1 0 1 0 0-2h-9.5zM5 10a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm2.75-1a1 1 0 0 0 0 2h9.5a1 1 0 1 0 0-2h-9.5zM5 16a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm2.75-1a1 1 0 1 0 0 2h9.5a1 1 0 1 0 0-2h-9.5z"})]}))}u.displayName=u.name+" [from "+i.id+"]",u._size=20,u._isSVG=!0;var c=u;l.default=c}),98);
-__d("ProdashCometV2MatchDetailsPageContainerQuery_facebookRelayOperation",[],(function(t,n,r,o,a,i){a.exports="35970293385903508"}),null);

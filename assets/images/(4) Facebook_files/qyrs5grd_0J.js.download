@@ -1,3 +1,0 @@
-;/*FB_PKG_DELIM*/
-
-__d("MWEncryptedBackupsDeviceRegistrationId",["FBLogger","MessengerWebInitData"],(function(t,n,r,o,a,i,l){"use strict";function e(){var e=r("MessengerWebInitData").sessionId;return e==null?(r("FBLogger")("wmi_eb").mustfix("PAKE: Failed to get registration id from MessengerWebInitData"),""):e}l.getDeviceRegistrationId=e}),98);
