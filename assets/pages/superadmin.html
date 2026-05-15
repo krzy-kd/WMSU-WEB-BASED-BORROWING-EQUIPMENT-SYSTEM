@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Campus Equipment Borrowing System</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#c62828;--red-dark:#b71c1c;--red-mid:#ef5350;--red-light:#ef9a9a;
+  --red-pale:#ffebee;--sidebar-w:230px;--bg:#f4f5f9;--card:#fff;
+  --text:#1c1c2e;--muted:#6b7280;--border:#e8eaef;--radius:14px;
+  --shadow:0 2px 14px rgba(0,0,0,.07);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh;font-size:14px}
+
+/* ── LOGIN SCREEN ── */
+#loginScreen{
+  position:fixed;inset:0;background:#f4f5f9;display:flex;align-items:center;
+  justify-content:center;z-index:1000;transition:opacity .35s ease;
+}
+#loginScreen.hidden{opacity:0;pointer-events:none}
+.login-box{
+  background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.12);
+  padding:40px 44px;width:min(420px,92vw);display:flex;flex-direction:column;gap:22px;
+}
+.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.login-brand-icon{width:44px;height:44px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.login-brand-icon svg{width:22px;height:22px}
+.login-brand-name{font-size:15px;font-weight:700;line-height:1.2;color:var(--text)}
+.login-brand-sub{font-size:12px;color:var(--muted)}
+.login-title{font-size:22px;font-weight:700;color:var(--text)}
+.login-sub{font-size:13.5px;color:var(--muted);margin-top:2px}
+.login-form{display:flex;flex-direction:column;gap:16px}
+.login-group{display:flex;flex-direction:column;gap:6px}
+.login-group label{font-size:12.5px;font-weight:600;color:var(--text)}
+.login-input-wrap{position:relative}
+.login-input-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);width:16px;height:16px;pointer-events:none}
+.login-input{
+  width:100%;padding:10px 12px 10px 38px;border:1.5px solid var(--border);border-radius:10px;
+  font-size:14px;font-family:inherit;outline:none;color:var(--text);background:#fff;
+  transition:border .15s,box-shadow .15s;
+}
+.login-input:focus{border-color:var(--red-light);box-shadow:0 0 0 3px rgba(198,40,40,.08)}
+.login-error{
+  display:none;background:#fdecea;border-radius:9px;padding:10px 14px;
+  color:var(--red);font-size:13px;font-weight:500;
+}
+.login-error.show{display:block}
+.login-btn{
+  background:var(--red);color:#fff;border:none;border-radius:10px;padding:12px;
+  font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;transition:background .15s,transform .1s;
+}
+.login-btn:hover{background:var(--red-dark)}
+.login-btn:active{transform:scale(.98)}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--red);display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;z-index:200;overflow-y:auto;transition:transform .3s}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 16px 20px;border-bottom:1px solid rgba(255,255,255,.15)}
+.brand-icon{width:36px;height:36px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-name{color:#fff;font-weight:700;font-size:13px;line-height:1.2}
+.brand-sub{color:rgba(255,255,255,.7);font-size:11px}
+nav{display:flex;flex-direction:column;padding:12px 0;flex:1}
+.nav-link{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,.8);text-decoration:none;font-size:13.5px;font-weight:500;transition:background .15s,color .15s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.nav-link:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav-link.active{background:#fff;color:var(--red);border-radius:8px;margin:0 10px;padding:10px 10px;width:calc(100% - 20px)}
+.nav-link svg{width:17px;height:17px;flex-shrink:0}
+.logout-wrap{margin-top:auto;border-top:1px solid rgba(255,255,255,.15);padding-top:12px}
+
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:0 22px;height:58px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.hamburger{background:none;border:none;cursor:pointer;color:var(--text);padding:4px;display:flex}
+.topbar h1{font-size:19px;font-weight:700;flex:1}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.bell-btn{background:none;border:none;cursor:pointer;color:var(--muted);position:relative;padding:4px;display:flex}
+.bell-dot{position:absolute;top:4px;right:4px;width:7px;height:7px;background:var(--red);border-radius:50%;border:2px solid #fff}
+.user-chip{display:flex;align-items:center;gap:8px;cursor:pointer}
+.avatar{width:33px;height:33px;background:var(--red);border-radius:50%;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center}
+
+/* CONTENT */
+.content{padding:22px;display:flex;flex-direction:column;gap:22px}
+.page{display:none}
+.page.active{display:flex;flex-direction:column;gap:22px}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.stat-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 14px;display:flex;align-items:center;gap:12px;transition:transform .2s}
+.stat-card:hover{transform:translateY(-2px)}
+.s-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.s-icon svg{width:20px;height:20px}
+.ic-u{background:#fdecea;color:#c62828}.ic-p{background:#fff3e0;color:#e65100}
+.ic-b{background:#e8f5e9;color:#2e7d32}.ic-o{background:#fff8e1;color:#f57f17}
+.ic-a{background:#e8eaf6;color:#3949ab}.ic-av{background:#f3e5f5;color:#7b1fa2}
+.s-val{font-size:21px;font-weight:700;line-height:1.1}
+.s-lbl{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* CHARTS */
+.charts-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.chart-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px 20px;display:flex;flex-direction:column;gap:14px}
+.ch-header{display:flex;justify-content:space-between;align-items:flex-start}
+.ch-title{font-size:14.5px;font-weight:700;margin-bottom:2px}
+.ch-sub{font-size:11.5px;color:var(--muted)}
+.ch-select{border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-family:inherit;color:var(--text);background:#fff;cursor:pointer;outline:none}
+.pie-layout{display:flex;align-items:center;gap:18px}
+.legend{display:flex;flex-direction:column;gap:7px;flex:1}
+.leg-row{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted)}
+.leg-row strong{margin-left:auto;color:var(--text);font-weight:600}
+.dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.d1{background:#c62828}.d2{background:#ef9a9a}.d3{background:#ffcdd2}.d4{background:#ffebee}
+.info-box{margin-top:6px;background:var(--bg);border-radius:9px;padding:10px 12px}
+.info-box .ib-lbl{font-size:11px;color:var(--muted)}
+.info-box .ib-val{font-size:14px;font-weight:700;color:var(--red)}
+.ch-footer{display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:12px;margin-top:4px}
+.ft-pct{display:flex;align-items:center;gap:4px;font-size:16px;font-weight:700;color:var(--red)}
+.ft-lbl{font-size:12px;color:var(--muted)}
+.ft-count{margin-left:auto;font-size:17px;font-weight:700;color:var(--red)}
+.ft-sub{font-size:12px;color:var(--muted)}
+.peak-wrap{display:flex;flex-direction:column;align-items:center;width:100%;padding-top:4px;text-align:center}
+.peak-wrap .pk-lbl{font-size:12px;color:var(--muted)}
+.peak-wrap .pk-val{font-size:19px;font-weight:700;color:var(--red)}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.page-title{font-size:18px;font-weight:700}
+.page-sub{font-size:13px;color:var(--muted);margin-top:2px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:9px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;transition:background .15s,transform .1s;font-family:inherit}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--red);color:#fff}
+.btn-primary:hover{background:var(--red-dark)}
+.btn-outline{background:#fff;color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--bg)}
+.btn-danger{background:#fdecea;color:var(--red)}
+.btn-danger:hover{background:#ffcdd2}
+.btn-success{background:#e8f5e9;color:#2e7d32}
+.btn-success:hover{background:#c8e6c9}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+/* SEARCH BAR */
+.search-bar{position:relative;flex:1;max-width:340px}
+.search-bar input{width:100%;padding:9px 12px 9px 36px;border:1px solid var(--border);border-radius:9px;font-size:13.5px;font-family:inherit;outline:none;background:#fff;transition:border .15s}
+.search-bar input:focus{border-color:var(--red-light)}
+.search-bar svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);width:16px;height:16px;pointer-events:none}
+
+/* TABLE */
+.table-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.table-toolbar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--bg)}
+th{padding:11px 16px;text-align:left;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+td{padding:12px 16px;font-size:13.5px;border-top:1px solid var(--border)}
+tr:hover td{background:#fafafa}
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.badge-green{background:#e8f5e9;color:#2e7d32}
+.badge-orange{background:#fff3e0;color:#e65100}
+.badge-red{background:#fdecea;color:#c62828}
+.badge-blue{background:#e3f2fd;color:#1565c0}
+.badge-purple{background:#f3e5f5;color:#7b1fa2}
+.badge-gray{background:#f5f5f5;color:#616161}
+.action-btns{display:flex;gap:6px}
+.table-footer{padding:12px 18px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--border);font-size:13px;color:var(--muted)}
+.pagination{display:flex;gap:4px}
+.pg-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--border);background:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--text)}
+.pg-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+.pg-btn:hover:not(.active){background:var(--bg)}
+
+/* FORM STYLES */
+.form-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12.5px;font-weight:600;color:var(--text)}
+.form-input,.form-select,.form-textarea{padding:9px 12px;border:1px solid var(--border);border-radius:9px;font-size:13.5px;font-family:inherit;outline:none;transition:border .15s;background:#fff}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--red-light)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+
+/* LOGS */
+.log-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.log-item:last-child{border-bottom:none}
+.log-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.log-icon svg{width:15px;height:15px}
+.log-meta{font-size:11.5px;color:var(--muted);margin-top:2px}
+.log-msg{font-size:13px;font-weight:500}
+
+/* SETTINGS */
+.settings-section{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;display:flex;flex-direction:column;gap:18px}
+.settings-title{font-size:15px;font-weight:700;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:4px 0}
+.setting-info{flex:1}
+.setting-label{font-size:13.5px;font-weight:600}
+.setting-desc{font-size:12px;color:var(--muted);margin-top:2px}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:#e0e0e0;border-radius:12px;cursor:pointer;transition:background .2s}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-slider{background:var(--red)}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px)}
+
+/* INVENTORY GRID */
+.inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.inv-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;display:flex;flex-direction:column;gap:10px;transition:transform .2s}
+.inv-card:hover{transform:translateY(-2px)}
+.inv-img{width:100%;height:120px;background:var(--bg);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+.inv-img svg{width:40px;height:40px;opacity:.4}
+.inv-name{font-size:14px;font-weight:700}
+.inv-cat{font-size:12px;color:var(--muted)}
+.inv-footer{display:flex;align-items:center;justify-content:space-between}
+.inv-qty{font-size:13px;color:var(--muted)}
+.inv-qty span{font-weight:700;color:var(--text)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:var(--radius);box-shadow:0 8px 40px rgba(0,0,0,.18);padding:28px;width:min(500px,90vw);transform:translateY(20px);transition:transform .2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;display:flex}
+.modal-close:hover{color:var(--text)}
+
+/* REPORTS */
+.report-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.rep-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;text-align:center}
+.rep-val{font-size:28px;font-weight:700;color:var(--red)}
+.rep-lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* ANNOUNCEMENTS */
+.ann-card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:10px}
+.ann-header{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.ann-title{font-size:14.5px;font-weight:700}
+.ann-date{font-size:11.5px;color:var(--muted);white-space:nowrap}
+.ann-body{font-size:13.5px;color:var(--muted);line-height:1.6}
+.ann-footer{display:flex;align-items:center;gap:8px}
+
+/* RESPONSIVE */
+@media(max-width:1200px){.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:960px){.charts-row,.form-grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .report-stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-brand">
+      <div class="login-brand-icon">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="login-brand-name">Campus Equipment</div>
+        <div class="login-brand-sub">Borrowing System</div>
+      </div>
+    </div>
+    <div>
+      <div class="login-title">Welcome back</div>
+      <div class="login-sub">Sign in to your account to continue.</div>
+    </div>
+    <div class="login-form">
+      <div class="login-group">
+        <label for="loginEmail">Email Address</label>
+        <div class="login-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/><polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/></svg>
+          <input class="login-input" type="email" id="loginEmail" placeholder="admin@campus.edu" autocomplete="username"/>
+        </div>
+      </div>
+      <div class="login-group">
+        <label for="loginPass">Password</label>
+        <div class="login-input-wrap">
+          <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke="currentColor" stroke-width="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4" stroke="currentColor" stroke-width="2"/></svg>
+          <input class="login-input" type="password" id="loginPass" placeholder="Enter your password" autocomplete="current-password"/>
+        </div>
+      </div>
+      <div class="login-error" id="loginError">Invalid email or password. Please try again.</div>
+      <button class="login-btn" onclick="handleLogin()">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD APP ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-icon">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M2 17l10 5 10-5" stroke="white" stroke-width="2" stroke-linejoin="round"/><path d="M2 12l10 5 10-5" stroke="white" stroke-width="2" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="brand-name">Campus Equipment</div>
+      <div class="brand-sub">Borrowing System</div>
+    </div>
+  </div>
+  <nav>
+    <button class="nav-link active" data-page="dashboard" data-title="Dashboard">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="currentColor"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="currentColor"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-link" data-page="user-management" data-title="User Management">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M1 21v-2a7 7 0 0 1 14 0v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.74" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      User Management
+    </button>
+    <button class="nav-link" data-page="admin-management" data-title="Admin Management">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/></svg>
+      Admin Management
+    </button>
+    <button class="nav-link" data-page="inventory" data-title="Inventory Management">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 9h20M9 21V9" stroke="currentColor" stroke-width="2"/></svg>
+      Inventory Management
+    </button>
+    <button class="nav-link" data-page="borrow-requests" data-title="Borrow Requests">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      Borrow Requests
+    </button>
+    <button class="nav-link" data-page="borrow-monitoring" data-title="Borrow Monitoring">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg>
+      Borrow Monitoring
+    </button>
+    <button class="nav-link" data-page="reports" data-title="Reports & Analytics">
+      <svg viewBox="0 0 24 24" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Reports &amp; Analytics
+    </button>
+    <button class="nav-link" data-page="system-logs" data-title="System Logs">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" stroke="currentColor" stroke-width="2"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="2"/></svg>
+      System Logs
+    </button>
+    <button class="nav-link" data-page="announcements" data-title="Announcements">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2"/></svg>
+      Announcements
+    </button>
+    <button class="nav-link" data-page="settings" data-title="System Settings">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2"/></svg>
+      System Settings
+    </button>
+    <div class="logout-wrap">
+      <button class="nav-link" id="logoutBtn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="16 17 21 12 16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Logout
+      </button>
+    </div>
+  </nav>
+</aside>
+
+<div class="main">
+  <header class="topbar">
+    <button class="hamburger" id="menuBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><line x1="3" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <h1 id="pageTitle">Dashboard</h1>
+    <div class="topbar-right">
+      <button class="bell-btn" id="bellBtn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="currentColor" stroke-width="2"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="currentColor" stroke-width="2"/></svg>
+        <span class="bell-dot" id="bellDot"></span>
+      </button>
+      <div class="user-chip">
+        <div class="avatar" id="topbarAvatar">SA</div>
+        <span style="font-size:13.5px;font-weight:600" id="topbarName">Super Admin</span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="6 9 12 15 18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="page active" id="page-dashboard">
+      <div class="stats">
+        <div class="stat-card"><div class="s-icon ic-u"><svg viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="s-val">3</div><div class="s-lbl">Total Users</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-p"><svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="s-val">2</div><div class="s-lbl">Pending Requests</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-b"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M2 9h20M9 21V9" stroke="currentColor" stroke-width="2"/></svg></div><div><div class="s-val">3</div><div class="s-lbl">Borrowed Items</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-o"><svg viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/><line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></div><div><div class="s-val">1</div><div class="s-lbl">Overdue Items</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-a"><svg viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2"/></svg></div><div><div class="s-val">2</div><div class="s-lbl">Active Admins</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-av"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="s-val">5</div><div class="s-lbl">Available Items</div></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="ch-header"><div><div class="ch-title">Borrow Trends</div><div class="ch-sub">Tracks daily and monthly borrowing activity.</div></div><select class="ch-select"><option>Monthly</option><option>Weekly</option></select></div>
+          <div style="position:relative"><canvas id="lineChart"></canvas></div>
+          <div class="ch-footer"><span class="ft-pct"><svg width="13" height="13" viewBox="0 0 24 24" fill="none"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" stroke="#c62828" stroke-width="2.5" stroke-linecap="round"/><polyline points="17 6 23 6 23 12" stroke="#c62828" stroke-width="2.5" stroke-linecap="round"/></svg>12%</span><span class="ft-lbl">increase from last month</span><span class="ft-count">2 <span class="ft-sub">requests this month</span></span></div>
+        </div>
+        <div class="chart-card">
+          <div class="ch-header"><div><div class="ch-title">Most Borrowed Categories</div><div class="ch-sub">Categories with highest borrowing activity.</div></div><select class="ch-select"><option>Monthly</option><option>Weekly</option></select></div>
+          <div class="pie-layout"><canvas id="pieChart" width="170" height="170"></canvas><div class="legend"><div class="leg-row"><span class="dot d1"></span>Sports Equipment<strong>52%</strong></div><div class="leg-row"><span class="dot d2"></span>Electronics<strong>28%</strong></div><div class="leg-row"><span class="dot d3"></span>Clothing<strong>12%</strong></div><div class="leg-row"><span class="dot d4"></span>Others<strong>8%</strong></div><div class="info-box"><div class="ib-lbl">Top Category</div><div class="ib-val">Sports Equipment</div></div></div></div>
+        </div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="ch-header"><div><div class="ch-title">User Role Distribution</div><div class="ch-sub">Percentage of users by account role.</div></div><select class="ch-select"><option>Monthly</option><option>Weekly</option></select></div>
+          <div class="pie-layout"><canvas id="donutChart" width="170" height="170"></canvas><div class="legend"><div class="leg-row"><span class="dot d1"></span>Students<strong>68%</strong></div><div class="leg-row"><span class="dot d2"></span>Teachers<strong>14%</strong></div><div class="leg-row"><span class="dot d3"></span>Staff<strong>12%</strong></div><div class="leg-row"><span class="dot d4"></span>Alumni<strong>6%</strong></div><div class="info-box"><div class="ib-lbl">Total Registered Users</div><div class="ib-val">3</div></div></div></div>
+        </div>
+        <div class="chart-card">
+          <div class="ch-header"><div><div class="ch-title">Monthly Borrow Activity</div><div class="ch-sub">Borrowing activity across different months.</div></div><select class="ch-select"><option>Monthly</option><option>Weekly</option></select></div>
+          <div style="position:relative"><canvas id="barChart"></canvas></div>
+          <div class="ch-footer"><div class="peak-wrap"><span class="pk-lbl">Peak Month</span><span class="pk-val">May</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- USER MANAGEMENT -->
+    <div class="page" id="page-user-management">
+      <div class="page-header">
+        <div><div class="page-title">User Management</div><div class="page-sub">Manage all registered users in the system.</div></div>
+        <button class="btn btn-primary" onclick="openModal('addUserModal')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Add User
+        </button>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-bar"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="text" placeholder="Search users..." oninput="filterTable(this,'userTable')"/></div>
+          <select class="ch-select"><option>All Roles</option><option>Student</option><option>Teacher</option><option>Staff</option><option>Alumni</option></select>
+          <select class="ch-select"><option>All Status</option><option>Active</option><option>Inactive</option></select>
+        </div>
+        <table id="userTable">
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Maria Santos</strong></td><td>maria.santos@campus.edu</td><td><span class="badge badge-blue">Student</span></td><td><span class="badge badge-green">Active</span></td><td>Jan 5, 2024</td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Juan dela Cruz</strong></td><td>juan.delacruz@campus.edu</td><td><span class="badge badge-purple">Teacher</span></td><td><span class="badge badge-green">Active</span></td><td>Feb 12, 2024</td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Ana Reyes</strong></td><td>ana.reyes@campus.edu</td><td><span class="badge badge-blue">Student</span></td><td><span class="badge badge-orange">Inactive</span></td><td>Mar 3, 2024</td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+          </tbody>
+        </table>
+        <div class="table-footer"><span>Showing 3 of 3 users</span><div class="pagination"><button class="pg-btn active">1</button></div></div>
+      </div>
+    </div>
+
+    <!-- ADMIN MANAGEMENT -->
+    <div class="page" id="page-admin-management">
+      <div class="page-header">
+        <div><div class="page-title">Admin Management</div><div class="page-sub">Manage system administrators and their permissions.</div></div>
+        <button class="btn btn-primary" onclick="openModal('addAdminModal')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          Add Admin
+        </button>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-bar"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="text" placeholder="Search admins..." oninput="filterTable(this,'adminTable')"/></div>
+        </div>
+        <table id="adminTable">
+          <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Access Level</th><th>Last Login</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Super Admin</strong></td><td>superadmin@campus.edu</td><td><span class="badge badge-red">Super Admin</span></td><td>Full Access</td><td>Today, 9:00 AM</td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button></div></td></tr>
+            <tr><td><strong>Roberto Cruz</strong></td><td>roberto.cruz@campus.edu</td><td><span class="badge badge-purple">Admin</span></td><td>Inventory + Requests</td><td>Today, 8:22 AM</td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Remove</button></div></td></tr>
+            <tr><td><strong>Nena Villanueva</strong></td><td>nena.v@campus.edu</td><td><span class="badge badge-purple">Admin</span></td><td>Reports + Logs</td><td>Yesterday, 3:14 PM</td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Remove</button></div></td></tr>
+          </tbody>
+        </table>
+        <div class="table-footer"><span>Showing 3 of 3 admins</span><div class="pagination"><button class="pg-btn active">1</button></div></div>
+      </div>
+    </div>
+
+    <!-- INVENTORY MANAGEMENT -->
+    <div class="page" id="page-inventory">
+      <div class="page-header">
+        <div><div class="page-title">Inventory Management</div><div class="page-sub">Track and manage all borrowable equipment.</div></div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-outline" id="viewToggleBtn" onclick="toggleInventoryView()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/><rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/><rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor"/></svg>
+            Grid View
+          </button>
+          <button class="btn btn-primary" onclick="openModal('addItemModal')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Add Item
+          </button>
+        </div>
+      </div>
+      <div id="inventoryGrid" class="inventory-grid" style="display:none">
+        <div class="inv-card"><div class="inv-img"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/></svg></div><div class="inv-name">Basketball</div><div class="inv-cat">Sports Equipment</div><div class="inv-footer"><span class="inv-qty">Qty: <span>12</span></span><span class="badge badge-green">Available</span></div></div>
+        <div class="inv-card"><div class="inv-img"><svg viewBox="0 0 24 24" fill="none"><rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/></svg></div><div class="inv-name">Projector</div><div class="inv-cat">Electronics</div><div class="inv-footer"><span class="inv-qty">Qty: <span>5</span></span><span class="badge badge-orange">Low Stock</span></div></div>
+        <div class="inv-card"><div class="inv-img"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z" stroke="currentColor" stroke-width="2"/></svg></div><div class="inv-name">Volleyball</div><div class="inv-cat">Sports Equipment</div><div class="inv-footer"><span class="inv-qty">Qty: <span>8</span></span><span class="badge badge-green">Available</span></div></div>
+        <div class="inv-card"><div class="inv-img"><svg viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" stroke="currentColor" stroke-width="2"/></svg></div><div class="inv-name">Tablet</div><div class="inv-cat">Electronics</div><div class="inv-footer"><span class="inv-qty">Qty: <span>3</span></span><span class="badge badge-red">Unavailable</span></div></div>
+        <div class="inv-card"><div class="inv-img"><svg viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" stroke-width="2"/></svg></div><div class="inv-name">Tent (Camping)</div><div class="inv-cat">Outdoor Gear</div><div class="inv-footer"><span class="inv-qty">Qty: <span>6</span></span><span class="badge badge-green">Available</span></div></div>
+        <div class="inv-card"><div class="inv-img"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M2 12h3m14 0h3M12 2v3m0 14v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div class="inv-name">Microphone</div><div class="inv-cat">Electronics</div><div class="inv-footer"><span class="inv-qty">Qty: <span>10</span></span><span class="badge badge-green">Available</span></div></div>
+      </div>
+      <div class="table-card" id="inventoryTable">
+        <div class="table-toolbar">
+          <div class="search-bar"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="text" placeholder="Search items..." oninput="filterTable(this,'invTable')"/></div>
+          <select class="ch-select"><option>All Categories</option><option>Sports Equipment</option><option>Electronics</option><option>Clothing</option><option>Outdoor Gear</option></select>
+          <select class="ch-select"><option>All Status</option><option>Available</option><option>Low Stock</option><option>Unavailable</option></select>
+        </div>
+        <table id="invTable">
+          <thead><tr><th>Item Name</th><th>Category</th><th>Total Qty</th><th>Available</th><th>Borrowed</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Basketball</strong></td><td>Sports Equipment</td><td>15</td><td>12</td><td>3</td><td><span class="badge badge-green">Available</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Projector</strong></td><td>Electronics</td><td>8</td><td>5</td><td>3</td><td><span class="badge badge-orange">Low Stock</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Volleyball</strong></td><td>Sports Equipment</td><td>10</td><td>8</td><td>2</td><td><span class="badge badge-green">Available</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Tablet</strong></td><td>Electronics</td><td>5</td><td>0</td><td>5</td><td><span class="badge badge-red">Unavailable</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Camping Tent</strong></td><td>Outdoor Gear</td><td>6</td><td>6</td><td>0</td><td><span class="badge badge-green">Available</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+            <tr><td><strong>Microphone</strong></td><td>Electronics</td><td>10</td><td>10</td><td>0</td><td><span class="badge badge-green">Available</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></td></tr>
+          </tbody>
+        </table>
+        <div class="table-footer"><span>Showing 6 of 48 items</span><div class="pagination"><button class="pg-btn active">1</button><button class="pg-btn">2</button><button class="pg-btn">›</button></div></div>
+      </div>
+    </div>
+
+    <!-- BORROW REQUESTS -->
+    <div class="page" id="page-borrow-requests">
+      <div class="page-header">
+        <div><div class="page-title">Borrow Requests</div><div class="page-sub">Review and manage incoming borrowing requests.</div></div>
+        <span class="badge badge-orange" style="padding:8px 14px;font-size:13px">320 Pending</span>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-bar"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="text" placeholder="Search requests..." oninput="filterTable(this,'reqTable')"/></div>
+          <select class="ch-select"><option>All Status</option><option>Pending</option><option>Approved</option><option>Rejected</option></select>
+        </div>
+        <table id="reqTable">
+          <thead><tr><th>Request ID</th><th>Borrower</th><th>Item</th><th>Borrow Date</th><th>Return Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>#REQ-001</strong></td><td>Maria Santos</td><td>Basketball (x2)</td><td>May 12, 2025</td><td>May 14, 2025</td><td><span class="badge badge-orange">Pending</span></td><td><div class="action-btns"><button class="btn btn-success btn-sm">Approve</button><button class="btn btn-danger btn-sm">Reject</button></div></td></tr>
+            <tr><td><strong>#REQ-002</strong></td><td>Juan dela Cruz</td><td>Projector (x1)</td><td>May 13, 2025</td><td>May 13, 2025</td><td><span class="badge badge-orange">Pending</span></td><td><div class="action-btns"><button class="btn btn-success btn-sm">Approve</button><button class="btn btn-danger btn-sm">Reject</button></div></td></tr>
+            <tr><td><strong>#REQ-003</strong></td><td>Ana Reyes</td><td>Microphone (x3)</td><td>May 10, 2025</td><td>May 12, 2025</td><td><span class="badge badge-green">Approved</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">View</button></div></td></tr>
+            <tr><td><strong>#REQ-004</strong></td><td>Carlos Mendoza</td><td>Tent (x1)</td><td>May 9, 2025</td><td>May 11, 2025</td><td><span class="badge badge-red">Rejected</span></td><td><div class="action-btns"><button class="btn btn-outline btn-sm">View</button></div></td></tr>
+            <tr><td><strong>#REQ-005</strong></td><td>Liza Flores</td><td>Volleyball (x1)</td><td>May 14, 2025</td><td>May 16, 2025</td><td><span class="badge badge-orange">Pending</span></td><td><div class="action-btns"><button class="btn btn-success btn-sm">Approve</button><button class="btn btn-danger btn-sm">Reject</button></div></td></tr>
+          </tbody>
+        </table>
+        <div class="table-footer"><span>Showing 5 of 320 requests</span><div class="pagination"><button class="pg-btn active">1</button><button class="pg-btn">2</button><button class="pg-btn">›</button></div></div>
+      </div>
+    </div>
+
+    <!-- BORROW MONITORING -->
+    <div class="page" id="page-borrow-monitoring">
+      <div class="page-header">
+        <div><div class="page-title">Borrow Monitoring</div><div class="page-sub">Track all active and completed borrowing transactions.</div></div>
+      </div>
+      <div class="stats" style="grid-template-columns:repeat(4,1fr)">
+        <div class="stat-card"><div class="s-icon ic-b"><svg viewBox="0 0 24 24" fill="none"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg></div><div><div class="s-val">560</div><div class="s-lbl">Active Borrows</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-o"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="s-val">14</div><div class="s-lbl">Overdue</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-a"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><div class="s-val">1,823</div><div class="s-lbl">Returned (Total)</div></div></div>
+        <div class="stat-card"><div class="s-icon ic-u"><svg viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></div><div><div class="s-val">3</div><div class="s-lbl">Damaged Reports</div></div></div>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-bar"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="text" placeholder="Search records..." oninput="filterTable(this,'monTable')"/></div>
+          <select class="ch-select"><option>All Status</option><option>Active</option><option>Overdue</option><option>Returned</option></select>
+        </div>
+        <table id="monTable">
+          <thead><tr><th>Transaction ID</th><th>Borrower</th><th>Item</th><th>Borrowed On</th><th>Due Date</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody>
+            <tr><td><strong>#TRX-1001</strong></td><td>Maria Santos</td><td>Microphone (x3)</td><td>May 10, 2025</td><td>May 12, 2025</td><td><span class="badge badge-red">Overdue</span></td><td><button class="btn btn-outline btn-sm">Mark Returned</button></td></tr>
+            <tr><td><strong>#TRX-1002</strong></td><td>Ramon Garcia</td><td>Basketball (x2)</td><td>May 11, 2025</td><td>May 15, 2025</td><td><span class="badge badge-blue">Active</span></td><td><button class="btn btn-outline btn-sm">Mark Returned</button></td></tr>
+            <tr><td><strong>#TRX-1003</strong></td><td>Ana Reyes</td><td>Projector (x1)</td><td>May 8, 2025</td><td>May 9, 2025</td><td><span class="badge badge-green">Returned</span></td><td><button class="btn btn-outline btn-sm">View</button></td></tr>
+            <tr><td><strong>#TRX-1004</strong></td><td>Liza Flores</td><td>Volleyball (x1)</td><td>May 12, 2025</td><td>May 16, 2025</td><td><span class="badge badge-blue">Active</span></td><td><button class="btn btn-outline btn-sm">Mark Returned</button></td></tr>
+          </tbody>
+        </table>
+        <div class="table-footer"><span>Showing 4 of 560 active records</span><div class="pagination"><button class="pg-btn active">1</button><button class="pg-btn">2</button><button class="pg-btn">›</button></div></div>
+      </div>
+    </div>
+
+    <!-- REPORTS & ANALYTICS -->
+    <div class="page" id="page-reports">
+      <div class="page-header">
+        <div><div class="page-title">Reports &amp; Analytics</div><div class="page-sub">Comprehensive overview of system performance.</div></div>
+        <div style="display:flex;gap:10px">
+          <select class="ch-select"><option>May 2025</option><option>April 2025</option><option>March 2025</option></select>
+          <button class="btn btn-primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Export PDF</button>
+        </div>
+      </div>
+      <div class="report-stats">
+        <div class="rep-card"><div class="rep-val">1,240</div><div class="rep-lbl">Total Users</div></div>
+        <div class="rep-card"><div class="rep-val">2,383</div><div class="rep-lbl">Total Borrows (All Time)</div></div>
+        <div class="rep-card"><div class="rep-val">98.2%</div><div class="rep-lbl">Return Rate</div></div>
+        <div class="rep-card"><div class="rep-val">320</div><div class="rep-lbl">Requests This Month</div></div>
+        <div class="rep-card"><div class="rep-val">4.8</div><div class="rep-lbl">Avg. Borrow Days</div></div>
+        <div class="rep-card"><div class="rep-val">14</div><div class="rep-lbl">Current Overdue</div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card"><div class="ch-header"><div><div class="ch-title">Borrow Trends</div><div class="ch-sub">6-month borrowing activity overview</div></div></div><canvas id="repLineChart"></canvas></div>
+        <div class="chart-card"><div class="ch-header"><div><div class="ch-title">Category Breakdown</div><div class="ch-sub">Most borrowed item categories</div></div></div><div class="pie-layout"><canvas id="repPieChart" width="170" height="170"></canvas><div class="legend"><div class="leg-row"><span class="dot d1"></span>Sports Equipment<strong>52%</strong></div><div class="leg-row"><span class="dot d2"></span>Electronics<strong>28%</strong></div><div class="leg-row"><span class="dot d3"></span>Clothing<strong>12%</strong></div><div class="leg-row"><span class="dot d4"></span>Others<strong>8%</strong></div></div></div></div>
+      </div>
+    </div>
+
+    <!-- SYSTEM LOGS -->
+    <div class="page" id="page-system-logs">
+      <div class="page-header">
+        <div><div class="page-title">System Logs</div><div class="page-sub">Audit trail of all system activities.</div></div>
+        <div style="display:flex;gap:10px">
+          <select class="ch-select"><option>All Activities</option><option>Login</option><option>Borrow</option><option>Admin</option><option>Error</option></select>
+          <button class="btn btn-outline">Export CSV</button>
+        </div>
+      </div>
+      <div class="table-card" style="padding:0 20px">
+        <div style="padding:14px 0;border-bottom:1px solid var(--border)"><div class="search-bar" style="max-width:100%"><svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><input type="text" placeholder="Search logs..."/></div></div>
+        <div id="systemLogsContainer">
+          <div class="log-item"><div class="log-icon" style="background:#e8f5e9;color:#2e7d32"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="16 17 21 12 16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="log-msg">Maria Santos logged in</div><div class="log-meta">Today · 9:14 AM · IP: 192.168.1.12</div></div></div>
+          <div class="log-item"><div class="log-icon" style="background:#e3f2fd;color:#1565c0"><svg viewBox="0 0 24 24" fill="none"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="log-msg">Borrow request #REQ-001 submitted by Maria Santos</div><div class="log-meta">Today · 9:16 AM</div></div></div>
+          <div class="log-item"><div class="log-icon" style="background:#e8f5e9;color:#2e7d32"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="log-msg">Admin Roberto Cruz approved request #REQ-003</div><div class="log-meta">Today · 8:55 AM</div></div></div>
+          <div class="log-item"><div class="log-icon" style="background:#fdecea;color:#c62828"><svg viewBox="0 0 24 24" fill="none"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="17" r="1" fill="currentColor"/></svg></div><div><div class="log-msg">Overdue alert triggered for TRX-1001 (Maria Santos)</div><div class="log-meta">Today · 8:00 AM · Auto-generated</div></div></div>
+          <div class="log-item"><div class="log-icon" style="background:#e8f5e9;color:#2e7d32"><svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><div><div class="log-msg">Juan dela Cruz logged out</div><div class="log-meta">Yesterday · 5:01 PM · IP: 192.168.1.24</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="page" id="page-announcements">
+      <div class="page-header">
+        <div><div class="page-title">Announcements</div><div class="page-sub">System-wide announcements and notices.</div></div>
+        <button class="btn btn-primary" onclick="openModal('addAnnModal')"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>New Announcement</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="ann-card"><div class="ann-header"><div><div class="ann-title">System Maintenance — May 15, 2025</div><span class="badge badge-red">Important</span></div><span class="ann-date">May 12, 2025</span></div><div class="ann-body">The Campus Equipment Borrowing System will undergo scheduled maintenance on May 15, 2025 from 12:00 AM to 4:00 AM. All services will be unavailable during this period.</div><div class="ann-footer"><span class="badge badge-blue">All Users</span><button class="btn btn-outline btn-sm" style="margin-left:auto">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></div>
+        <div class="ann-card"><div class="ann-header"><div><div class="ann-title">New Items Added to Inventory</div><span class="badge badge-green">Info</span></div><span class="ann-date">May 10, 2025</span></div><div class="ann-body">New camping tents and microphones are now available for borrowing. Maximum borrow duration is 3 days.</div><div class="ann-footer"><span class="badge badge-blue">All Users</span><button class="btn btn-outline btn-sm" style="margin-left:auto">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></div>
+        <div class="ann-card"><div class="ann-header"><div><div class="ann-title">Reminder: Return All Overdue Items</div><span class="badge badge-orange">Notice</span></div><span class="ann-date">May 8, 2025</span></div><div class="ann-body">This is a reminder to all users with overdue items. Please return borrowed equipment immediately to avoid suspension of borrowing privileges.</div><div class="ann-footer"><span class="badge badge-red">Overdue Users</span><button class="btn btn-outline btn-sm" style="margin-left:auto">Edit</button><button class="btn btn-danger btn-sm">Delete</button></div></div>
+      </div>
+    </div>
+
+    <!-- SYSTEM SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="page-header">
+        <div><div class="page-title">System Settings</div><div class="page-sub">Configure system preferences and behavior.</div></div>
+        <button class="btn btn-primary" id="saveSettingsBtn" onclick="this.textContent='Saved!';setTimeout(()=>this.textContent='Save Changes',2000)">Save Changes</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+        <div class="settings-section">
+          <div class="settings-title">General Settings</div>
+          <div class="form-group"><label>System Name</label><input class="form-input" value="Campus Equipment Borrowing System"/></div>
+          <div class="form-group"><label>School / Institution</label><input class="form-input" value="University of the Philippines"/></div>
+          <div class="form-group"><label>Max Borrow Duration (days)</label><input class="form-input" type="number" value="7"/></div>
+          <div class="form-group"><label>Max Items Per Borrow</label><input class="form-input" type="number" value="5"/></div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-title">Notifications</div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Email Notifications</div><div class="setting-desc">Send email alerts for approvals and overdues</div></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Overdue Alerts</div><div class="setting-desc">Automatically notify users of overdue items</div></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">New Request Alerts</div><div class="setting-desc">Notify admins of incoming borrow requests</div></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">System Announcements</div><div class="setting-desc">Broadcast announcements to all users</div></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-title">Security</div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Two-Factor Authentication</div><div class="setting-desc">Require 2FA for admin accounts</div></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Session Timeout</div><div class="setting-desc">Auto-logout inactive users after 30 minutes</div></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+          <div class="form-group" style="margin-top:8px"><label>Admin Login Attempts Before Lockout</label><input class="form-input" type="number" value="5"/></div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-title">Maintenance</div>
+          <div class="setting-row"><div class="setting-info"><div class="setting-label">Maintenance Mode</div><div class="setting-desc">Disable public access for maintenance</div></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+            <button class="btn btn-outline" style="justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="7 10 12 15 17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="15" x2="12" y2="3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Export All Data</button>
+            <button class="btn btn-danger" style="justify-content:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><polyline points="3 6 5 6 21 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Clear System Logs</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+<div class="modal-overlay" id="addUserModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Add New User</span><button class="modal-close" onclick="closeModal('addUserModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>First Name</label><input class="form-input" placeholder="Enter first name"/></div>
+      <div class="form-group"><label>Last Name</label><input class="form-input" placeholder="Enter last name"/></div>
+      <div class="form-group full"><label>Email</label><input class="form-input" type="email" placeholder="user@campus.edu"/></div>
+      <div class="form-group"><label>Role</label><select class="form-select"><option>Student</option><option>Teacher</option><option>Staff</option><option>Alumni</option></select></div>
+      <div class="form-group"><label>Status</label><select class="form-select"><option>Active</option><option>Inactive</option></select></div>
+    </div>
+    <div class="form-actions" style="margin-top:18px"><button class="btn btn-outline" onclick="closeModal('addUserModal')">Cancel</button><button class="btn btn-primary" onclick="closeModal('addUserModal')">Add User</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addAdminModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Add New Admin</span><button class="modal-close" onclick="closeModal('addAdminModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="form-grid">
+      <div class="form-group"><label>Name</label><input class="form-input" placeholder="Full name"/></div>
+      <div class="form-group"><label>Email</label><input class="form-input" type="email" placeholder="admin@campus.edu"/></div>
+      <div class="form-group full"><label>Role</label><select class="form-select"><option>Admin</option><option>Moderator</option></select></div>
+      <div class="form-group full"><label>Access Permissions</label><select class="form-select"><option>Inventory + Requests</option><option>Reports + Logs</option><option>Users Only</option><option>Full Access</option></select></div>
+      <div class="form-group full"><label>Temporary Password</label><input class="form-input" type="password" placeholder="Set password"/></div>
+    </div>
+    <div class="form-actions" style="margin-top:18px"><button class="btn btn-outline" onclick="closeModal('addAdminModal')">Cancel</button><button class="btn btn-primary" onclick="closeModal('addAdminModal')">Add Admin</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addItemModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Add Inventory Item</span><button class="modal-close" onclick="closeModal('addItemModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Item Name</label><input class="form-input" placeholder="e.g. Basketball"/></div>
+      <div class="form-group"><label>Category</label><select class="form-select"><option>Sports Equipment</option><option>Electronics</option><option>Clothing</option><option>Outdoor Gear</option></select></div>
+      <div class="form-group"><label>Quantity</label><input class="form-input" type="number" placeholder="0"/></div>
+      <div class="form-group full"><label>Description</label><textarea class="form-textarea" placeholder="Item description..."></textarea></div>
+    </div>
+    <div class="form-actions" style="margin-top:18px"><button class="btn btn-outline" onclick="closeModal('addItemModal')">Cancel</button><button class="btn btn-primary" onclick="closeModal('addItemModal')">Add Item</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="addAnnModal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">New Announcement</span><button class="modal-close" onclick="closeModal('addAnnModal')"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="6" y1="6" x2="18" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
+    <div class="form-grid">
+      <div class="form-group full"><label>Title</label><input class="form-input" placeholder="Announcement title"/></div>
+      <div class="form-group"><label>Type</label><select class="form-select"><option>Info</option><option>Important</option><option>Notice</option></select></div>
+      <div class="form-group"><label>Audience</label><select class="form-select"><option>All Users</option><option>Students</option><option>Teachers</option><option>Staff</option></select></div>
+      <div class="form-group full"><label>Message</label><textarea class="form-textarea" rows="4" placeholder="Write your announcement..."></textarea></div>
+    </div>
+    <div class="form-actions" style="margin-top:18px"><button class="btn btn-outline" onclick="closeModal('addAnnModal')">Cancel</button><button class="btn btn-primary" onclick="closeModal('addAnnModal')">Publish</button></div>
+  </div>
+</div>
+
+<!-- Logout Confirm Modal -->
+<div class="modal-overlay" id="logoutModal">
+  <div class="modal" style="max-width:380px;text-align:center">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:10px 0">
+      <div style="width:54px;height:54px;background:#fdecea;border-radius:50%;display:flex;align-items:center;justify-content:center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="#c62828" stroke-width="2" stroke-linecap="round"/><polyline points="16 17 21 12 16 7" stroke="#c62828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="21" y1="12" x2="9" y2="12" stroke="#c62828" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="modal-title" style="font-size:17px">Confirm Logout</div>
+      <p style="font-size:13.5px;color:var(--muted)">Are you sure you want to log out of the Campus Equipment Borrowing System?</p>
+      <div style="display:flex;gap:10px;justify-content:center;width:100%">
+        <button class="btn btn-outline" style="flex:1" onclick="closeModal('logoutModal')">Cancel</button>
+        <button class="btn btn-primary" style="flex:1" onclick="confirmLogout()">Logout</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── ACCOUNTS ──
+const ACCOUNTS = [
+  { email: 'superadmin@campus.edu', password: 'admin123', name: 'Super Admin', initials: 'SA', role: 'superadmin' },
+  { email: 'roberto.cruz@campus.edu', password: 'admin123', name: 'Roberto Cruz', initials: 'RC', role: 'admin' },
+  { email: 'nena.v@campus.edu', password: 'admin123', name: 'Nena Villanueva', initials: 'NV', role: 'admin' },
+];
+
+let currentUser = null;
+
+// ── LOGIN ──
+function handleLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPass').value;
+  const errorEl = document.getElementById('loginError');
+
+  if (!email || !pass) {
+    errorEl.textContent = 'Please enter your email and password.';
+    errorEl.classList.add('show');
+    return;
+  }
+
+  const account = ACCOUNTS.find(a => a.email === email && a.password === pass);
+  if (!account) {
+    errorEl.textContent = 'Invalid email or password. Please try again.';
+    errorEl.classList.add('show');
+    document.getElementById('loginPass').value = '';
+    return;
+  }
+
+  // Successful login
+  errorEl.classList.remove('show');
+  currentUser = account;
+
+  // Update topbar
+  document.getElementById('topbarName').textContent = account.name;
+  document.getElementById('topbarAvatar').textContent = account.initials;
+
+  // Add login log entry
+  addLogEntry(account.name + ' logged in', 'login');
+
+  // Hide login screen
+  const screen = document.getElementById('loginScreen');
+  screen.classList.add('hidden');
+  setTimeout(() => { screen.style.display = 'none'; }, 350);
+
+  // Build charts once visible
+  buildDashboardCharts();
+}
+
+// Allow Enter key on login
+document.getElementById('loginPass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+});
+document.getElementById('loginEmail').addEventListener('keydown', e => {
+  if (e.key === 'Enter') handleLogin();
+});
+
+// ── LOGOUT ──
+function confirmLogout() {
+  if (currentUser) {
+    addLogEntry(currentUser.name + ' logged out', 'logout');
+  }
+  closeModal('logoutModal');
+
+  // Show login screen again
+  const screen = document.getElementById('loginScreen');
+  screen.style.display = 'flex';
+  screen.style.opacity = '0';
+  setTimeout(() => { screen.style.opacity = '1'; }, 10);
+  screen.classList.remove('hidden');
+
+  // Reset form
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPass').value = '';
+  document.getElementById('loginError').classList.remove('show');
+  currentUser = null;
+
+  // Reset nav to dashboard
+  document.querySelectorAll('.nav-link[data-page]').forEach(l => l.classList.remove('active'));
+  document.querySelector('[data-page="dashboard"]').classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-dashboard').classList.add('active');
+  document.getElementById('pageTitle').textContent = 'Dashboard';
+}
+
+// ── LOG HELPER ──
+function addLogEntry(msg, type) {
+  const colors = {
+    login: { bg:'#e8f5e9', color:'#2e7d32' },
+    logout: { bg:'#e8f5e9', color:'#2e7d32' },
+    default: { bg:'#e3f2fd', color:'#1565c0' }
+  };
+  const c = colors[type] || colors.default;
+  const now = new Date();
+  const time = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const icon = type === 'login' || type === 'logout'
+    ? `<svg viewBox="0 0 24 24" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="16 17 21 12 16 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`
+    : `<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+
+  const el = document.createElement('div');
+  el.className = 'log-item';
+  el.innerHTML = `<div class="log-icon" style="background:${c.bg};color:${c.color}">${icon}</div><div><div class="log-msg">${msg}</div><div class="log-meta">Today · ${time}</div></div>`;
+  const container = document.getElementById('systemLogsContainer');
+  container.insertBefore(el, container.firstChild);
+}
+
+// ── NAVIGATION ──
+const navLinks = document.querySelectorAll('.nav-link[data-page]');
+const pages = document.querySelectorAll('.page');
+const pageTitle = document.getElementById('pageTitle');
+let chartsBuilt = {};
+
+navLinks.forEach(link => {
+  link.addEventListener('click', function() {
+    const page = this.dataset.page;
+    const title = this.dataset.title;
+    navLinks.forEach(l => l.classList.remove('active'));
+    this.classList.add('active');
+    pages.forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + page).classList.add('active');
+    pageTitle.textContent = title;
+    if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+    if (page === 'reports' && !chartsBuilt.reports) {
+      chartsBuilt.reports = true;
+      buildReportCharts();
+    }
+  });
+});
+
+// ── SIDEBAR TOGGLE ──
+document.getElementById('menuBtn').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+document.addEventListener('click', e => {
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuBtn.contains(e.target)) {
+    sidebar.classList.remove('open');
+  }
+});
+
+// ── LOGOUT BUTTON ──
+document.getElementById('logoutBtn').addEventListener('click', () => openModal('logoutModal'));
+
+// ── MODALS ──
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// ── TABLE FILTER ──
+function filterTable(input, tableId) {
+  const val = input.value.toLowerCase();
+  document.querySelectorAll('#' + tableId + ' tbody tr').forEach(row => {
+    row.style.display = row.textContent.toLowerCase().includes(val) ? '' : 'none';
+  });
+}
+
+// ── INVENTORY TOGGLE ──
+let gridView = false;
+function toggleInventoryView() {
+  gridView = !gridView;
+  document.getElementById('inventoryGrid').style.display = gridView ? 'grid' : 'none';
+  document.getElementById('inventoryTable').style.display = gridView ? 'none' : 'block';
+  document.getElementById('viewToggleBtn').innerHTML = gridView
+    ? `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><line x1="8" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="12" x2="21" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="8" y1="18" x2="21" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> List View`
+    : `<svg width="15" height="15" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="currentColor"/><rect x="14" y="3" width="7" height="7" rx="1" fill="currentColor"/><rect x="3" y="14" width="7" height="7" rx="1" fill="currentColor"/><rect x="14" y="14" width="7" height="7" rx="1" fill="currentColor"/></svg> Grid View`;
+}
+
+// ── BELL ──
+document.getElementById('bellBtn').addEventListener('click', () => {
+  document.getElementById('bellDot').style.display = 'none';
+});
+
+// ── CHARTS ──
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.plugins.legend.display = false;
+const RED = '#c62828', RED2 = '#ef9a9a';
+let dashboardChartsBuilt = false;
+
+function buildDashboardCharts() {
+  if (dashboardChartsBuilt) return;
+  dashboardChartsBuilt = true;
+
+  const lineCtx = document.getElementById('lineChart').getContext('2d');
+  const lineGrad = lineCtx.createLinearGradient(0, 0, 0, 220);
+  lineGrad.addColorStop(0, 'rgba(198,40,40,0.15)');
+  lineGrad.addColorStop(1, 'rgba(198,40,40,0)');
+  new Chart(lineCtx, {
+    type: 'line',
+    data: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], datasets: [{ data: [90,170,230,180,330,265], borderColor: RED, borderWidth: 2.5, pointBackgroundColor: RED, pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, pointHoverRadius: 7, fill: true, backgroundColor: lineGrad, tension: 0.42 }] },
+    options: { responsive: true, plugins: { tooltip: { callbacks: { label: c => ` ${c.parsed.y} requests` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 12 } } }, y: { min: 0, max: 400, ticks: { stepSize: 100, color: '#9ca3af', font: { size: 12 } }, grid: { color: '#f0f2f5' } } } }
+  });
+  new Chart(document.getElementById('pieChart'), {
+    type: 'pie',
+    data: { labels: ['Sports Equipment','Electronics','Clothing','Others'], datasets: [{ data: [52,28,12,8], backgroundColor: ['#c62828','#ef9a9a','#ffcdd2','#ffebee'], borderColor: '#fff', borderWidth: 3, hoverOffset: 7 }] },
+    options: { responsive: false, plugins: { tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed}%` } } } }
+  });
+  new Chart(document.getElementById('donutChart'), {
+    type: 'doughnut',
+    data: { labels: ['Students','Teachers','Staff','Alumni'], datasets: [{ data: [68,14,12,6], backgroundColor: ['#c62828','#ef9a9a','#ffcdd2','#ffebee'], borderColor: '#fff', borderWidth: 3, hoverOffset: 7 }] },
+    options: { responsive: false, cutout: '60%', plugins: { tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed}%` } } } }
+  });
+  const barData = [110,195,240,160,340,270];
+  new Chart(document.getElementById('barChart'), {
+    type: 'bar',
+    data: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], datasets: [{ data: barData, backgroundColor: barData.map((_,i) => i===4 ? RED : RED2), borderRadius: 6, borderSkipped: false }] },
+    options: { responsive: true, plugins: { tooltip: { callbacks: { label: c => ` ${c.parsed.y} borrows` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 12 } } }, y: { min: 0, max: 400, ticks: { stepSize: 100, color: '#9ca3af', font: { size: 12 } }, grid: { color: '#f0f2f5' } } } }
+  });
+}
+
+function buildReportCharts() {
+  const rCtx = document.getElementById('repLineChart').getContext('2d');
+  const rGrad = rCtx.createLinearGradient(0, 0, 0, 200);
+  rGrad.addColorStop(0, 'rgba(198,40,40,0.15)');
+  rGrad.addColorStop(1, 'rgba(198,40,40,0)');
+  new Chart(rCtx, {
+    type: 'line',
+    data: { labels: ['Jan','Feb','Mar','Apr','May','Jun'], datasets: [{ data: [110,195,240,160,340,270], borderColor: RED, borderWidth: 2.5, pointBackgroundColor: RED, pointBorderColor: '#fff', pointBorderWidth: 2, pointRadius: 5, fill: true, backgroundColor: rGrad, tension: 0.42 }] },
+    options: { responsive: true, plugins: { tooltip: { callbacks: { label: c => ` ${c.parsed.y} borrows` } } }, scales: { x: { grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 12 } } }, y: { min: 0, max: 400, ticks: { stepSize: 100, color: '#9ca3af', font: { size: 12 } }, grid: { color: '#f0f2f5' } } } }
+  });
+  new Chart(document.getElementById('repPieChart'), {
+    type: 'doughnut',
+    data: { labels: ['Sports Equipment','Electronics','Clothing','Others'], datasets: [{ data: [52,28,12,8], backgroundColor: ['#c62828','#ef9a9a','#ffcdd2','#ffebee'], borderColor: '#fff', borderWidth: 3, hoverOffset: 7 }] },
+    options: { responsive: false, cutout: '55%', plugins: { tooltip: { callbacks: { label: c => ` ${c.label}: ${c.parsed}%` } } } }
+  });
+}
+
+document.querySelectorAll('.pg-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    this.closest('.pagination').querySelectorAll('.pg-btn').forEach(b => b.classList.remove('active'));
+    if (!['›','‹'].includes(this.textContent)) this.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

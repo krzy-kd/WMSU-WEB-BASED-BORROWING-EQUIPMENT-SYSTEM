@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EBS - My Request</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="/assets/styles/style-req.css">
+</head>
+<body>
+
+    <nav id="TopBar" class="nav-bar">
+        <div class="nav-left">
+            <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png"  class="logo-img">
+           
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="/assets/pages/home-page.html">HOME</a></li>
+            <li><a href="/assets/pages/browse-page-2.html">BROWSE</a></li>
+            <li><a href="/assets/pages/request-new.html">MY REQ</a></li>
+            <li><a href="/assets/pages/history.html">HISTORY</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="profile-btn">
+              <span class="user-icon"><a href="user-profile.html">👤</a></span>
+            </div>
+        </div>
+    </nav>
+
+<div class="page-header">
+  <h1 class="page-title">MY REQUEST</h1>
+  <a href="#" class="view-req-btn" onclick="showToast('Viewing your requests…'); return false;">
+    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <polyline points="14 2 14 8 20 8"/>
+    </svg>
+    VIEW MY REQ
+  </a>
+</div>
+
+<main>
+  <div class="section-title">Request</div>
+
+  <div class="request-card">
+    <div class="item-image-col">
+      <div class="item-id-label" id="reqItemIdLabel">ITEM ID: ---</div>
+      <img src="/assets/images/basketball/basketBall.webp" id="reqItemImg" alt="Item Image">
+    </div>
+
+    <div class="item-details-col">
+      <div class="item-meta">
+        <div class="item-meta-right">
+          <div class="user-name">User U. User</div>
+          <div class="user-role">Student</div>
+          <div class="user-email">Ty12341234@wmsu.edu.ph</div>
+        </div>
+      </div>
+
+      <table class="info-table">
+        <tr>
+          <td>Borrow Date:</td>
+          <td><input type="date" id="borrowDate"/></td>
+        </tr>
+        <tr>
+          <td>Return Date:</td>
+          <td><input type="date" id="returnDate"/></td>
+        </tr>
+        <tr>
+          <td>Purpose Of Borrowing:</td>
+          <td><input type="text" id="purpose" placeholder="Enter purpose…"/></td>
+        </tr>
+        <tr>
+          <td>Eligibility Status:</td>
+          <td id="eligibilityCell" style="color: #28a745; font-weight: 500;">Eligible To Borrow</td>
+        </tr>
+      </table>
+
+      <div class="policy-check">
+        <input type="checkbox" id="policyCheck"/>
+        <label for="policyCheck">I Agree To Follow The Borrowing Policies.</label>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">Submit</button>
+        <button class="btn-cancel" id="cancelBtn" onclick="handleCancel()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>return items on time</span>
+  <span>handle equipment properly</span>
+  <span>damaged items may result in penalties</span>
+</footer>
+
+<div class="modal-overlay" id="cancelModal">
+  <div class="modal">
+    <h2 style="color: #8B0000; font-family: 'EB Garamond', serif; font-size: 1.5rem; margin-bottom: 10px;">Cancel Request?</h2>
+    <p style="font-size: 0.88rem; color: #666; margin-bottom: 24px;">Are you sure you want to cancel this borrowing request? This action cannot be undone.</p>
+    <div class="modal-btns">
+      <button class="modal-confirm" onclick="confirmCancel()">Yes, Cancel</button>
+      <button class="modal-dismiss" onclick="closeModal()">Go Back</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="/assets/Javascripts/req-new.js"></script>
+</body>
+</html>

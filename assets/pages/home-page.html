@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/assets/styles/home-page.css">
+</head>
+<body>
+    
+    <nav id="TopBar" class="nav-bar">
+        <div class="nav-left">
+            <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png"  class="logo-img">
+           
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="/assets/pages/home-page.html">HOME</a></li>
+            <li><a href="/assets/pages/browse-page-2.html">BROWSE</a></li>
+            <li><a href="/assets/pages/request-new.html">MY REQ</a></li>
+            <li><a href="/assets/pages/user-profile.html">HISTORY</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="profile-btn">
+                <span class="user-icon"><a href="user-profile.html">👤</a></span>
+            </div>
+        </div>
+    </nav>
+
+    <header class="header r-cta">
+        <div class="cta-container">
+        <div class="cta-text">
+            <h2>READY TO BORROW EQUIPMENT?</h2>
+        </div>
+        <div class="cta-actions">
+            <p>START EXPLORING AND REQUEST ITEMS NOW</p>
+            <div class="cta-buttons">
+                <form action="browse-page.html"><button class="btn-browse">Browse Items</button></form>
+                <form action="#"><button class="btn-requests">My Requests</button></form>
+            </div>
+        </div>
+    </div>
+    </header>
+
+    
+    <main>
+        <div class="container">
+            <div class="info-block">
+                <h2 class="section-title">Equipment Categories</h2>
+                <div class="categories-grid">
+                    <div class="category-item">
+                        <div class="img-frame"><img src="/assets/images/Frisbee-Disc.jpg" alt="Sports"></div>
+                        <h3>BASKETBALL</h3>
+                    </div>
+                    <div class="category-item">
+                        <div class="img-frame"><img src="/assets/images/soccerball.jpg" alt="Electronics"></div>
+                        <h3>VOLLEYBALL</h3>
+                    </div>
+                    <div class="category-item">
+                        <div class="img-frame"><img src="/assets/images/Volleyball.jpg" alt="Others"></div>
+                        <h3>PICKEL BALL</h3>
+                    </div>
+                </div>
+            </div>
+        </div
+    </main>
+
+        <div class="content-area">
+            <section>  
+                <div class="left-lines">
+                    <h2 id="category-title"  class="section-title">Recently Borrowed</h2>
+                    <span class="lines"></span>
+                </div>
+                
+            <div class="items-grid" id="itemsGrid">
+                <div class="item-card" data-name="VolleyBall">
+                    <span class="item-id">SPT-001</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/PingPong.jpg" alt="Volleyball"> </div>
+                    <div class="item-info">
+                        <h3>VolleyBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status available"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Disc">
+                    <span class="item-id">SPT-002</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/Volleyball.jpg" alt="Disc">
+                    </div>
+                    <div class="item-info">
+                        <h3>Disc</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status available"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Sepak Ball">
+                    <span class="item-id">SPT-003</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/Sepak-ball.jpg" alt="Sepak Ball">
+                    </div>
+                    <div class="item-info">
+                        <h3>Sepak Ball</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status available"><span class="dot"></span> Available</div>
+                    </div>
+                </div>
+            </div>
+            </section>
+        </div>
+ 
+
+        <div class="content-area">
+            <section>  
+                <div class="left-lines">
+                    <h2 id="category-title"  class="section-title">Most Borrowed</h2>
+                    <span class="lines"></span>
+                </div>
+                
+            <div class="items-grid" id="itemsGrid">
+                <div class="item-card" data-name="VolleyBall">
+                    <span class="item-id">SPT-001</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/soccerball.jpg" alt="Volleyball"> </div>
+                    <div class="item-info">
+                        <h3>VolleyBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Disc">
+                    <span class="item-id">SPT-002</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/Shuttle-cock.jpg" alt="Disc">
+                    </div>
+                    <div class="item-info">
+                        <h3>Disc</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Sepak Ball">
+                    <span class="item-id">SPT-003</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/Frisbee-Disc.jpg" alt="Sepak Ball">
+                    </div>
+                    <div class="item-info">
+                        <h3>Sepak Ball</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status available"><span class="dot"></span> Available</div>
+                    </div>
+                </div>
+            </div>
+            </section>
+        </div>
+
+
+        <div class="content-area">
+            <section>  
+                <div class="left-lines">
+                    <h2 id="category-title"  class="section-title">Least Borrowed</h2>
+                    <span class="lines"></span>
+                </div>
+                
+            <div class="items-grid" id="itemsGrid">
+                <div class="item-card" data-name="VolleyBall">
+                    <span class="item-id">SPT-001</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/Volleyball.jpg" alt="Volleyball"> </div>
+                    <div class="item-info">
+                        <h3>VolleyBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Disc">
+                    <span class="item-id">SPT-002</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/Cones.jpg" alt="Disc">
+                    </div>
+                    <div class="item-info">
+                        <h3>Disc</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Sepak Ball">
+                    <span class="item-id">SPT-003</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/PingPong.jpg" alt="Sepak Ball">
+                    </div>
+                    <div class="item-info">
+                        <h3>Sepak Ball</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status available"><span class="dot"></span> Available</div>
+                    </div>
+                </div>
+            </div>
+            </section>
+        </div>
+
+
+    <footer class="foot features-section">
+        <div class="con container">
+            <div class="info-block">
+                <h2 class="section-title">What You Can Do</h2>
+                <div class="cards-grid">
+                    <div class="feature-card">
+                        <i class="icon-box">📦</i>
+                        <h3>EASY BORROWING</h3>
+                        <p>QUICKLY REQUEST EQUIPMENT IN JUST A FEW CLICKS</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="icon-clock">🕒</i>
+                        <h3>REAL-TIME AVAILABILITY</h3>
+                        <p>SEE WHICH ITEMS ARE AVAILABLE INSTANTLY</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="icon-bell">🔔</i>
+                        <h3>REQUEST TRACKING</h3>
+                        <p>TRACK YOUR BORROW STATUS ANYTIME</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="icon-user">👤</i>
+                        <h3>VERIFIED USERS ONLY</h3>
+                        <p>ENSURES SAFE AND SECURE BORROWING</p>
+                    </div>
+                </div>
+            </div>
+            
+
+            <div class="info-block">
+                <div class="title-with-lines">
+                    <span class="line"></span>
+                    <h2 class="section-title">How It Works</h2>
+                    <span class="line"></span>
+                </div>
+
+                <div class="steps-container">
+                    <div class="step">
+                        <span class="step-num">1</span>
+                        <h4>BROWSE</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <span class="step-num">2</span>
+                        <h4>REQUEST</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <span class="step-num">3</span>
+                        <h4>APPROVAL</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <span class="step-num">4</span>
+                        <h4>RETURN</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                </div>    
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

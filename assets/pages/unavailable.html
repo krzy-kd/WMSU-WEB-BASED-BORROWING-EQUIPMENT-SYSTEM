@@ -1,0 +1,251 @@
+            <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Browse Items - University Borrowing</title>
+        <link rel="stylesheet" href="/assets/styles/unabalable.css">
+    </head>
+    <body>
+
+        <nav id="TopBar" class="nav-bar">
+        <div class="nav-left">
+            <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png"  class="logo-img">
+            
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="search...">
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="home-page.html">HOME</a></li>
+            <li><a href="browse-page.html">BROWSE</a></li>
+            <li><a href="#">MY REQ</a></li>
+            <li><a href="#">HISTORY</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="profile-btn">
+                <span class="user-icon"><a href="user-profile.html">👤</a></span>
+            </div>
+        </div>
+    </nav>
+
+        <header class="hero-section">
+            <h1>BROWSE ITEMS</h1>
+            <p>EXPLORE AVAILABLE EQUIPMENT AND RESOURCES THAT CAN BE BORROWED WITHIN THE UNIVERSITY.</p>
+            
+            <div class="category-filters">
+                <form action=""><button class="filter-btn active" data-target="sports">🏀 SPORTS EQUIPMENT</button></form>
+                <form action=""><button class="filter-btn" data-target="electronics">⛺ OTHERS</button></form>
+                <form action="#help-section"><button class="filter-btn" data-target="Works">⛺ HOW IT WORKS?</button></form>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <section>
+            <div class="controls-row">
+                <h2 id="category-title">Sports Equipments</h2>
+        
+                <div class="dropdowns">
+                    <select id="item-dropdown">
+                        <option value="">item</option>
+                        <option value="Basketball-page.html">Basketball</option>    
+                        <option value="football-page.html">Football</option>
+                        <option value="freesbee-page.html">Frisbee</option>
+                        <option value="Pickeball-page.html">Pickeball</option>
+                        <option value="Sepak-page.html">Sepak Takraw</option>
+                        <option value="volleyball-page.html">Volleyball</option>
+                    </select>
+
+                    <select id="availability-filter"><option value="">Availability</option>
+                        <option value="browse-page.html">Both</option>
+                        <option value="available.html">Available</option>
+                        <option value="unavailable.html">Unavailable</option>
+                    </select>
+                    
+                </div> 
+            </div>   
+
+            <div class="items-grid" id="itemsGrid">
+                <div class="item-card" data-name="VolleyBall">
+                    <span class="item-id">SPT-001</span>
+                    <div class="image-wrapper">
+                        <img src="" alt="Volleyball"> </div>
+                    <div class="item-info">
+                        <h3>VolleyBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Disc">
+                    <span class="item-id">SPT-002</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/ba61b452-2e1b-4080-901c-7085a328456a.jpg" alt="Disc">
+                    </div>
+                    <div class="item-info">
+                        <h3>Disc</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Sepak Ball">
+                    <span class="item-id">SPT-003</span>
+                    <div class="image-wrapper">
+                        <img src="" alt="Sepak Ball">
+                    </div>
+                    <div class="item-info">
+                        <h3>Sepak Ball</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Available</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="FootBall">
+                    <span class="item-id">SPT-004</span>
+                    <div class="image-wrapper">
+                        <img src="/assets/images/8470cfcd-c852-453d-8b7c-73503a5edfee.jpg" alt="FootBall">
+                    </div>
+                    <div class="item-info">
+                        <h3>FootBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Sepak Ball">
+                    <span class="item-id">SPT-005</span>
+                    <div class="image-wrapper">
+                        <img src="" alt="Sepak Ball">
+                    </div>
+                    <div class="item-info">
+                        <h3>Sepak Ball</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Available</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="VolleyBall">
+                    <span class="item-id">SPT-006</span>
+                    <div class="image-wrapper">
+                        <img src="" alt="VolleyBall">
+                    </div>
+                    <div class="item-info">
+                        <h3>VolleyBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="Disc">
+                    <span class="item-id">SPT-007</span>
+                    <div class="image-wrapper">
+                        <img src="" alt="Disc">
+                    </div>
+                    <div class="item-info">
+                        <h3>Disc</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Unavailable</div>
+                    </div>
+                </div>
+
+                <div class="item-card" data-name="VolleyBall">
+                    <span class="item-id">SPT-008</span>
+                    <div class="image-wrapper">
+                        <img src="" alt="VolleyBall">
+                    </div>
+                    <div class="item-info">
+                        <h3>VolleyBall</h3>
+                        <p>Sports Equipment</p>
+                        <div class="status unavailable"><span class="dot"></span> Available</div>
+                    </div>
+                </div>
+            </div>
+            </section>
+        </main>
+
+        <footer class="features-section" id="help-section">
+            
+        <div class="container">
+            
+            <div class="info-block">
+                <h2 class="section-title">What You Can Do</h2>
+                <div class="cards-grid">
+                    <div class="feature-card">
+                        <i class="icon-box">📦</i>
+                        <h3>EASY BORROWING</h3>
+                        <p>QUICKLY REQUEST EQUIPMENT IN JUST A FEW CLICKS</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="icon-clock">🕒</i>
+                        <h3>REAL-TIME AVAILABILITY</h3>
+                        <p>SEE WHICH ITEMS ARE AVAILABLE INSTANTLY</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="icon-bell">🔔</i>
+                        <h3>REQUEST TRACKING</h3>
+                        <p>TRACK YOUR BORROW STATUS ANYTIME</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="icon-user">👤</i>
+                        <h3>VERIFIED USERS ONLY</h3>
+                        <p>ENSURES SAFE AND SECURE BORROWING</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-block">
+                <div class="title-with-lines">
+                    <span class="line"></span>
+                    <h2 class="section-title">How It Works</h2>
+                    <span class="line"></span>
+                </div>
+                <div class="steps-container">
+                    <div class="step">
+                        <span class="step-num">1</span>
+                        <h4>BROWSE</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <span class="step-num">2</span>
+                        <h4>REQUEST</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <span class="step-num">3</span>
+                        <h4>APPROVAL</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="step">
+                        <span class="step-num">4</span>
+                        <h4>RETURN</h4>
+                        <p>VIEW AND SELECT AVAILABLE EQUIPMENT.</p>
+                    </div>
+                </div>
+            </div>
+        </footer> 
+        
+        
+
+            <section class="security-section">
+                <h2 class="main-title">Safe & Secure Borrowing</h2>
+                <div class="pill-grid">
+                    <div class="pill-card">Verified Users Only</div>
+                    <div class="pill-card">Admin Approval Required</div>
+                    <div class="pill-card">Borrow Tracking</div>
+                    <div class="pill-card">Return Monitoring</div>
+                </div>
+            </section>
+
+        <div>
+            <form action="#TopBar"><button id="toTop">▲</button></form>
+        </div>
+        <script src="/assets/Javascripts/availability.js"></script>
+    </body>
+    </html>

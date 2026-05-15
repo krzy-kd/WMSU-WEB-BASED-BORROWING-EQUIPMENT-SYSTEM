@@ -1,0 +1,81 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Registration alumni</title>
+        <link rel="stylesheet" href="/assets/styles/Create-acc.css">
+    </head>
+    <body>
+        <div class="container">
+            <div class="image-section">
+                <img src="/assets/images/WMSU-SHS.jpg" alt="University Building" id="hero-img">
+            </div>
+
+            <div class="form-section">
+                <div>
+                    <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png" alt="Logo" id="Logo">
+                </div>
+                <div class="header">
+                    <h1>Welcome !</h1>
+                    <p>Create An Account</p>
+                </div>
+
+                <form action="" id="registrationForm">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input id="inputName" type="text" placeholder="First Name, Middle Initial, Surname" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Teacher ID</label>
+                        <input id="inputIDNumber" type="text" placeholder="20252345" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Occupation</label>
+                        <input id="inputOcc" type="text" placeholder="Teacher" required>
+                    </div>
+
+                     <div class="input-group">
+                        <label>School Email</label>
+                        <input id="inputScEmail" type="email" placeholder="tp12345678@wmsu.edu.ph" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Role</label>
+                        <input id="roleDisplay" type="text" placeholder="Detected Role..." readonly>
+                    </div>
+
+                    <div class="input-group password-wrapper">
+                        <label>Password</label>
+                        <input id="inputPass" type="password" placeholder="Abcdefg23." class="password-field" required>
+                        <span class="toggle-password">👁</span>
+                    </div>
+
+                    <div class="input-group password-wrapper">
+                        <label>Confirm Password</label>
+                        <input id="inputConPass" type="password" placeholder="Abcdefg23." class="password-field" required>
+                        <span class="toggle-password">👁</span>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" id="checkbox">
+                        <span style="font-size: small;">I Agree To The Borrowing Policies And Responsibilities, <a href="">Click Here</a></span>
+                    </div>
+
+                    <div class="actions ">
+                        <form action="Emergency-contact-page.html"><button type="submit" class="next-btn">Next</button></form>
+                    </div>
+                </form>
+
+                <div class="footer">
+                    <span>Already Have An Account? <a href="Log-In.html">Log In</a></span>
+                    <form action="Create-acc.html"><button class="back-btn">↩</button></form>
+                </div>
+            </div>
+        </div>  
+       <script src="/assets/Javascripts/staff-signing.js"> </script>
+</body>
+</html> 

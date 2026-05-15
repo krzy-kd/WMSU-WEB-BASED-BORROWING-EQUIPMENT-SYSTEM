@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Page2</title>
+    <link rel="stylesheet" href="/assets/styles/Create-acc-2nd-page.css">
+</head>
+<body>
+    <div class="container">
+        <div class="image-section">
+            <img src="/assets/images/WMSU-SHS.jpg" alt="University Building" id="hero-img">
+        </div>
+
+        <div class="form-section">
+            <div>
+                <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png" alt="Logo" id="Logo">
+            </div>
+            <div class="header">
+                <h1>Welcome !</h1>
+                <p>Create An Account</p>
+            </div>
+
+            <form action="Emergency-contact-page.html" id="registrationForm">
+                <div class="input-group">
+                    <label>Department</label>
+                    <input type="text" placeholder="College of Computing Studies" required>
+                </div>
+
+               <div class="input-group">
+                    <label>Course</label>
+                    <input type="text" placeholder="Informational Technology" required>
+                </div> 
+
+                <div class="input-group">
+                    <label>Year level</label>
+                    <select  name="Year level" id="SelectLvl" required>
+                        <div class="Opt">
+                            <option id="FirstY" value="FirstY">First Year</option>
+                            <option id="SecondY" value="SecondY">Second Year</option>
+                            <option id="ThirdY" value="ThirdY">Third Year</option>
+                            <option id="FourthY" value="FourthY">Fourth Year</option>
+                            <option id="FifthY" value="FifthY">Fifth Year</option>
+                        </div>
+                    </select>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="next-btn">Next</button>
+                </div>
+            </form>
+
+            <div class="footer">
+                <span style="font-size: small;">Already Have An Account? <a href="Log-In.html">Log In</a></span>
+                <form action="Create-acc.html">
+                    <button class="back-btn">↩</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/Javascripts/Create-acc.js"></script>
+</body>
+</html>

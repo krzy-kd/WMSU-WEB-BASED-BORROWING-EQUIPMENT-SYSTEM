@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Borrow History - EBS</title>
+    <link rel="stylesheet" href="../styles/history.css">
+</head>
+<body>
+
+    <nav id="TopBar" class="nav-bar">
+        <div class="nav-left">
+            <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png"  class="logo-img">
+            
+            <div class="search-wrapper">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="search...">
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li><a href="/assets/pages/home-page.html">HOME</a></li>
+            <li><a href="/assets/pages/browse-page-2.html">BROWSE</a></li>
+            <li><a href="/assets/pages/request-new.html">MY REQ</a></li>
+            <li><a href="/assets/pages/history.html">HISTORY</a></li>
+        </ul>
+
+        <div class="nav-right">
+            <div class="profile-btn">
+                <span class="user-icon"><a href="user-profile.html">👤</a></span>
+            </div>
+        </div>
+    </nav>
+
+    <hr class="nav-line">
+
+    <main class="container">
+        <header class="page-header">
+            <div class="title-area">
+                <h1>BORROW HISTORY</h1>
+                <p>REVIEW YOUR PREVIOUS BORROWING TRANSACTIONS, RETURNED EQUIPMENT, AND BORROWING RECORDS.</p>
+            </div>
+            <div class="pills-area" style="display: flex; gap: 10px;">
+                <button id="btnBorrowed" class="filter-btn">total borrowed <span class="dot yellow"></span></button>
+                <button id="btnOverdue" class="filter-btn">overdue <span class="dot red"></span></button>
+            </div>
+        </header>
+
+        <h2 class="grid-title" id="sectionTitle">Borrow Library</h2>
+
+        <div class="items-grid" id="borrowedItems">
+            <div class="item-card">
+                <div class="card-tag">SPT-001</div>
+                <div class="card-img">
+                    <img src="/assets/images/Volleyball.jpg" alt="Volleyball">
+                </div>
+                <div class="card-info">
+                    <h3>VolleyBall</h3>
+                    <p><strong>Request Date:</strong> May 10, 2026</p>
+                    <p><strong>Status:</strong> <span class="returned">Returned</span></p>
+                    <p><strong>Return Date:</strong> May 10, 2026</p>
+                    <p><strong>Condition:</strong> Good</p>
+                </div>
+            </div>
+
+            <div class="item-card placeholder">
+                <div class="plus-icon"><a href="browse-page-2.html">+</a></div>
+                <p>Your Completed Transactions Will Appear Here.</p>
+            </div>
+            <div class="item-card placeholder">
+                <div class="plus-icon"><a href="browse-page-2.html">+</a></div>
+                <p>Your Completed Transactions Will Appear Here.</p>
+            </div>
+            <div class="item-card placeholder">
+                <div class="plus-icon"><a href="browse-page-2.html">+</a></div>
+                <p>Your Completed Transactions Will Appear Here.</p>
+            </div>
+        </div>
+
+        <div id="noOverdueMessage" class="empty-message">
+            <h3>No Overdue Items</h3>
+            <p>You don't have any overdue equipment right now.</p>
+        </div>
+    </main>
+<script src="../Javascripts/history.js"></script>
+</body>
+</html>

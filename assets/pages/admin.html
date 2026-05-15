@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>System Borrowing — Admin Panel</title>
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --gold: #7b1113;
+  --gold-dark: #631414;
+  --gold-light: #a83232;
+  --black: #111111;
+  --dark: #1a1a1a;
+  --dark2: #2a2a2a;
+  --red: #c62828;
+  --red-light: #fde8e8;
+  --green: #2e7d32;
+  --green-light: #d4edda;
+  --yellow: #f39c12;
+  --yellow-light: #fff3cd;
+  --bg: #fdfdfd;
+  --white: #ffffff;
+  --border: #e0e0e0;
+  --text: #333333;
+  --muted: #666666;
+  --radius: 8px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+#login-screen {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  background: var(--dark);
+}
+
+.login-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, #111 0%, #1a1a1a 50%, #0d0d0d 100%);
+  overflow: hidden;
+}
+
+.login-bg::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(123,17,19,0.15) 0%, transparent 70%);
+  top: -200px; right: -200px;
+}
+
+.login-bg::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(123,17,19,0.08) 0%, transparent 70%);
+  bottom: -150px; left: -100px;
+}
+
+.login-box {
+  position: relative; z-index: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(123,17,19,0.35);
+  border-radius: 16px;
+  padding: 48px 40px;
+  width: 380px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+}
+
+.login-logo { text-align: center; margin-bottom: 32px; }
+.logo-icon { font-size: 48px; display: block; margin-bottom: 8px; }
+
+.login-logo h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 42px;
+  color: var(--gold-light);
+  letter-spacing: 3px;
+}
+
+.login-logo p {
+  color: rgba(255,255,255,0.45);
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.login-form .form-group { margin-bottom: 18px; }
+
+.login-form label {
+  display: block;
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.login-form input {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius);
+  color: white;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.login-form input:focus {
+  border-color: var(--gold-light);
+  background: rgba(255,255,255,0.1);
+}
+
+.login-form input::placeholder { color: rgba(255,255,255,0.25); }
+
+.login-error {
+  background: rgba(198,40,40,0.2);
+  border: 1px solid rgba(198,40,40,0.4);
+  color: #ff6b6b;
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.btn-login {
+  width: 100%;
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: background 0.2s, transform 0.1s;
+  margin-top: 4px;
+}
+
+.btn-login:hover { background: var(--gold-light); }
+.btn-login:active { transform: scale(0.98); }
+
+#app { display: flex; height: 100vh; }
+
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  background: var(--dark);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #222;
+}
+
+.sidebar-logo {
+  padding: 22px 20px 18px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.logo-icon-sm { font-size: 22px; margin-right: 6px; }
+
+.sidebar-logo h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  color: var(--gold-light);
+  font-size: 26px;
+  letter-spacing: 2px;
+  display: inline;
+}
+
+.sidebar-logo small {
+  display: block;
+  color: rgba(255,255,255,0.35);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.sidebar-nav { flex: 1; padding: 10px 0; }
+
+.nav-item {
+  padding: 13px 20px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.45);
+  font-size: 14px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-left: 3px solid transparent;
+  transition: all 0.18s;
+  position: relative;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: var(--dark2);
+  color: rgba(255,255,255,0.8);
+  border-left-color: rgba(123,17,19,0.5);
+}
+
+.nav-item.active {
+  background: var(--dark2);
+  color: var(--gold-light);
+  border-left-color: var(--gold-light);
+}
+
+.nav-icon { font-size: 16px; }
+
+.sidebar-badge {
+  background: var(--red);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  padding: 2px 6px;
+  margin-left: auto;
+  display: none;
+}
+
+.sidebar-badge.show { display: inline-block; }
+
+.sidebar-footer {
+  padding: 14px 16px;
+  border-top: 1px solid #2a2a2a;
+}
+
+.logged-in-user { display: flex; align-items: center; gap: 10px; }
+
+.user-avatar {
+  width: 34px; height: 34px;
+  background: var(--gold);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.user-name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); }
+.user-role { font-size: 11px; color: rgba(255,255,255,0.35); }
+
+.content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+.top-bar {
+  background: var(--white);
+  padding: 12px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+}
+
+.top-bar-left { display: flex; align-items: center; gap: 16px; }
+
+.page-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1.5px;
+  color: var(--dark);
+}
+
+.current-date {
+  font-size: 12px;
+  color: var(--muted);
+  border-left: 1px solid var(--border);
+  padding-left: 16px;
+}
+
+.top-bar-right { display: flex; gap: 10px; }
+
+.btn-topbar {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.18s;
+}
+
+.btn-topbar:hover { background: #f0f0f0; }
+.btn-topbar.danger { background: var(--red-light); border-color: var(--red); color: var(--red); }
+.btn-topbar.danger:hover { background: var(--red); color: white; }
+
+.content-inner { flex: 1; padding: 22px 26px; overflow-y: auto; }
+
+.page { display: none; }
+.page.active { display: block; }
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px;
+  letter-spacing: 1.5px;
+  color: var(--dark);
+  margin-bottom: 14px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 14px 0 20px;
+}
+
+.stat-card {
+  background: var(--white);
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s;
+}
+
+.stat-card:hover { transform: translateY(-2px); }
+.stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.stat-val { font-family: 'Bebas Neue', sans-serif; font-size: 38px; letter-spacing: 1px; line-height: 1; }
+
+.card-box {
+  background: var(--white);
+  padding: 18px;
+  border-radius: var(--radius);
+  margin-top: 14px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.card-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.card-box h4 { font-size: 15px; font-weight: 600; color: var(--dark); }
+
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+
+th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  border-bottom: 2px solid var(--border);
+  font-weight: 600;
+}
+
+td {
+  padding: 11px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafafa; }
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-red { background: var(--red-light); color: var(--red); }
+.badge-yellow { background: var(--yellow-light); color: var(--yellow); }
+.badge-gray { background: #e8e8e8; color: #666; }
+.badge-gold { background: #fde8e8; color: var(--gold-dark); }
+
+.warn-banner {
+  background: var(--yellow-light);
+  border: 1px solid #ffe082;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-top: 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: var(--gold);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.btn-primary:hover { background: var(--gold-light); }
+
+.btn-secondary {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.18s;
+}
+
+.btn-secondary:hover { background: #f0f0f0; }
+
+.btn-danger {
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.18s;
+}
+
+.btn-danger:hover { opacity: 0.85; }
+
+.btn-action {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: opacity 0.15s;
+  margin-right: 4px;
+}
+
+.btn-action:hover { opacity: 0.8; }
+.btn-approve { background: var(--green-light); color: var(--green); }
+.btn-return { background: #e3eeff; color: #3b6cc7; }
+.btn-delete { background: var(--red-light); color: var(--red); }
+.btn-resolve { background: var(--green-light); color: var(--green); }
+
+.search-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg);
+  margin-bottom: 14px;
+  outline: none;
+  transition: border-color 0.18s;
+}
+
+.search-input:focus { border-color: var(--gold); background: white; }
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin: 14px 0 0;
+  border-bottom: 2px solid var(--border);
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 10px 18px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.18s;
+}
+
+.tab.active { color: var(--gold-dark); border-bottom-color: var(--gold); }
+.tab:hover { color: var(--text); }
+
+.settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.settings-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 18px; color: var(--dark); }
+
+.settings-msg {
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.settings-msg.success { background: var(--green-light); color: var(--green); }
+.settings-msg.error { background: var(--red-light); color: var(--red); }
+
+.form-group { margin-bottom: 14px; }
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 14px;
+  font-family: inherit;
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.18s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--gold);
+  background: white;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-overlay.open { display: flex; animation: fadeIn 0.18s ease; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: white;
+  border-radius: 12px;
+  width: 480px;
+  max-width: 95vw;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.25);
+  animation: slideUp 0.2s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+
+.modal-header h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.modal-close:hover { background: var(--bg); color: var(--text); }
+.modal-body { padding: 20px 22px; }
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 22px;
+  border-top: 1px solid var(--border);
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: var(--dark);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  z-index: 9999;
+  display: none;
+  border-left: 4px solid var(--gold-light);
+  animation: slideIn 0.25s ease;
+  max-width: 320px;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(60px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+.gold { color: var(--gold-dark); }
+.red { color: var(--red); }
+.green { color: var(--green); }
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.analytics-card-full { grid-column: 1 / -1; }
+.analytics-filter-row { display: flex; gap: 4px; margin: 14px 0 0; border-bottom: 2px solid var(--border); }
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.chart-legend-item { display: flex; align-items: center; gap: 5px; }
+.chart-legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+.feedback-message-preview {
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.content-inner::-webkit-scrollbar { width: 6px; }
+.content-inner::-webkit-scrollbar-track { background: transparent; }
+.content-inner::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+@media (max-width: 900px) {
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .settings-grid { grid-template-columns: 1fr; }
+  .analytics-grid { grid-template-columns: 1fr; }
+  .sidebar { width: 180px; min-width: 180px; }
+}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-bg"></div>
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="logo-icon">🏫</span>
+      <h1>System Borrowing</h1>
+      <p>Admin Portal</p>
+    </div>
+    <div class="login-form">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="admin" autocomplete="username"/>
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password"/>
+      </div>
+      <div id="login-error" class="login-error" style="display:none">Invalid credentials. Please try again.</div>
+      <button class="btn-login" onclick="doLogin()">Sign In</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
+
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <span class="logo-icon-sm">🏫</span>
+      <h2>SysBorrow</h2>
+      <small>Equipment Admin</small>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="showPage('dashboard', this)">
+        <span class="nav-icon">📊</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="showPage('equipment', this)">
+        <span class="nav-icon">🏃</span> Equipment
+      </div>
+      <div class="nav-item" onclick="showPage('borrows', this)">
+        <span class="nav-icon">📋</span> Borrow Requests
+      </div>
+      <div class="nav-item" onclick="showPage('violations', this)">
+        <span class="nav-icon">⚠️</span> Violations
+        <span id="vio-badge" class="sidebar-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('analytics', this)">
+        <span class="nav-icon">📈</span> Analytics
+      </div>
+      <div class="nav-item" onclick="showPage('feedback', this)">
+        <span class="nav-icon">💬</span> Feedback & Reports
+        <span id="feedback-badge" class="sidebar-badge">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('settings', this)">
+        <span class="nav-icon">⚙️</span> Settings
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="logged-in-user">
+        <div class="user-avatar" id="user-avatar-letter">A</div>
+        <div>
+          <div id="sidebar-username" class="user-name">Admin</div>
+          <div class="user-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <span id="page-title" class="page-title">Dashboard</span>
+        <span id="current-date" class="current-date"></span>
+      </div>
+      <div class="top-bar-right">
+        <button class="btn-topbar" onclick="runViolationCheck()">⚠ Check Overdues</button>
+        <button class="btn-topbar danger" onclick="doLogout()">↩ Logout</button>
+      </div>
+    </div>
+
+    <div class="content-inner">
+
+      <!-- DASHBOARD -->
+      <div id="page-dashboard" class="page active">
+        <h3 class="section-title">Overview</h3>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Equipment</div>
+            <div class="stat-val gold" id="stat-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Currently Borrowed</div>
+            <div class="stat-val" id="stat-borrowed">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Overdue / Violations</div>
+            <div class="stat-val red" id="stat-overdue">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Available Now</div>
+            <div class="stat-val green" id="stat-available">0</div>
+          </div>
+        </div>
+        <div id="overdue-warn-container"></div>
+        <div class="card-box">
+          <div class="card-box-header"><h4>Recent Borrow Activity</h4></div>
+          <table>
+            <thead>
+              <tr><th>Teacher</th><th>Equipment</th><th>Borrowed</th><th>Due Date</th><th>Status</th></tr>
+            </thead>
+            <tbody id="recent-activity-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- EQUIPMENT -->
+      <div id="page-equipment" class="page">
+        <div class="page-header">
+          <h3 class="section-title">Sports Equipment Inventory</h3>
+          <button class="btn-primary" onclick="openModal('add-equipment-modal')">+ Add Equipment</button>
+        </div>
+        <div class="card-box">
+          <input type="text" id="eq-search" class="search-input" placeholder="🔍 Search equipment..." oninput="renderEquipmentTable()" />
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Category</th><th>Qty Total</th><th>Available</th><th>Condition</th><th>Notes</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="equipment-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- BORROWS -->
+      <div id="page-borrows" class="page">
+        <div class="page-header">
+          <h3 class="section-title">Borrow Requests</h3>
+          <button class="btn-primary" onclick="openModal('add-borrow-modal')">+ New Request</button>
+        </div>
+        <div class="tabs">
+          <button class="tab active" onclick="switchBorrowTab('pending', this)">Pending</button>
+          <button class="tab" onclick="switchBorrowTab('approved', this)">Approved / Active</button>
+          <button class="tab" onclick="switchBorrowTab('returned', this)">Returned</button>
+        </div>
+        <div class="card-box" style="margin-top:0; border-top-left-radius:0; border-top-right-radius:0;">
+          <table>
+            <thead>
+              <tr><th>Teacher</th><th>Equipment</th><th>Qty</th><th>Purpose</th><th>Borrow Date</th><th>Due Date</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="borrow-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VIOLATIONS -->
+      <div id="page-violations" class="page">
+        <div class="page-header">
+          <h3 class="section-title">Violations &amp; Overdues</h3>
+          <button class="btn-primary" onclick="openModal('add-violation-modal')">+ Add Violation</button>
+        </div>
+        <div class="card-box">
+          <table>
+            <thead>
+              <tr><th>Teacher</th><th>Equipment</th><th>Due Date</th><th>Days Overdue</th><th>Penalty</th><th>Remarks</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="violations-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div id="page-analytics" class="page">
+        <h3 class="section-title">Analytics</h3>
+        <div class="analytics-filter-row">
+          <button class="tab active" onclick="setAnalyticsFilter('all', this)">All Time</button>
+          <button class="tab" onclick="setAnalyticsFilter('30', this)">Last 30 Days</button>
+          <button class="tab" onclick="setAnalyticsFilter('7', this)">Last 7 Days</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-label">Total Borrows</div>
+            <div class="stat-val gold" id="a-total">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Active Now</div>
+            <div class="stat-val green" id="a-active">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Most Borrowed</div>
+            <div class="stat-val" id="a-top" style="font-size:18px; padding-top:8px">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Avg. Borrow Days</div>
+            <div class="stat-val" id="a-avg">0</div>
+          </div>
+        </div>
+        <div class="analytics-grid">
+          <div class="card-box analytics-card-full">
+            <div class="card-box-header">
+              <h4>Borrow Frequency by Equipment</h4>
+              <span class="badge badge-gold">Top items</span>
+            </div>
+            <div style="position:relative; height:240px;">
+              <canvas id="freqChart"></canvas>
+            </div>
+            <div id="freq-legend" class="chart-legend"></div>
+          </div>
+          <div class="card-box">
+            <div class="card-box-header"><h4>Active Borrows Now</h4></div>
+            <div style="position:relative; height:240px;">
+              <canvas id="activeChart"></canvas>
+            </div>
+            <div id="active-legend" class="chart-legend"></div>
+          </div>
+          <div class="card-box">
+            <div class="card-box-header"><h4>Borrows by Category</h4></div>
+            <div style="position:relative; height:240px;">
+              <canvas id="catChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEEDBACK & REPORTS -->
+      <div id="page-feedback" class="page">
+        <div class="page-header">
+          <h3 class="section-title">Feedback &amp; Reports</h3>
+          <button class="btn-primary" onclick="openModal('add-feedback-modal')">+ Submit Feedback</button>
+        </div>
+        <div class="tabs">
+          <button class="tab active" onclick="switchFeedbackTab('all', this)">All</button>
+          <button class="tab" onclick="switchFeedbackTab('complaint', this)">Complaints</button>
+          <button class="tab" onclick="switchFeedbackTab('report', this)">Reports</button>
+          <button class="tab" onclick="switchFeedbackTab('suggestion', this)">Suggestions</button>
+        </div>
+        <div class="card-box" style="margin-top:0; border-top-left-radius:0; border-top-right-radius:0;">
+          <table>
+            <thead>
+              <tr><th>Date</th><th>Submitted By</th><th>Type</th><th>Subject</th><th>Message</th><th>Status</th><th>Actions</th></tr>
+            </thead>
+            <tbody id="feedback-table"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div id="page-settings" class="page">
+        <h3 class="section-title">Settings</h3>
+        <div class="settings-grid">
+          <div class="card-box settings-card">
+            <h4>Change Credentials</h4>
+            <div class="form-group">
+              <label>New Username</label>
+              <input type="text" id="new-username" placeholder="Enter new username"/>
+            </div>
+            <div class="form-group">
+              <label>Current Password</label>
+              <input type="password" id="curr-pass" placeholder="Current password"/>
+            </div>
+            <div class="form-group">
+              <label>New Password</label>
+              <input type="password" id="new-pass" placeholder="New password"/>
+            </div>
+            <div class="form-group">
+              <label>Confirm New Password</label>
+              <input type="password" id="confirm-pass" placeholder="Confirm new password"/>
+            </div>
+            <div id="settings-msg" class="settings-msg" style="display:none"></div>
+            <button class="btn-primary" onclick="saveCredentials()">Save Changes</button>
+          </div>
+          <div class="card-box settings-card">
+            <h4>Violation Rules</h4>
+            <div class="form-group">
+              <label>Penalty per overdue day (₱)</label>
+              <input type="number" id="penalty-per-day" value="50" min="0"/>
+            </div>
+            <div class="form-group">
+              <label>Grace Period (days before a violation is created)</label>
+              <input type="number" id="grace-period" value="1" min="0"/>
+            </div>
+            <button class="btn-primary" onclick="saveViolationRules()">Save Rules</button>
+          </div>
+          <div class="card-box settings-card">
+            <h4>Session</h4>
+            <p style="color:var(--muted); font-size:14px; margin-bottom:16px;">
+              Logged in as <strong id="settings-username">admin</strong>
+            </p>
+            <button class="btn-danger" onclick="doLogout()">Logout Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+
+<div id="add-equipment-modal" class="modal-overlay" onclick="closeModalOutside(event,'add-equipment-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Sports Equipment</h3>
+      <button onclick="closeModal('add-equipment-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Equipment Name</label>
+        <input type="text" id="eq-name" placeholder="e.g. Basketball"/>
+      </div>
+      <div class="form-group">
+        <label>Category</label>
+        <select id="eq-category">
+          <option>Ball Sports</option>
+          <option>Racket Sports</option>
+          <option>Athletics</option>
+          <option>Aquatics</option>
+          <option>Combat Sports</option>
+          <option>Fitness</option>
+          <option>Team Sports</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" id="eq-qty" value="1" min="1"/>
+        </div>
+        <div class="form-group">
+          <label>Condition</label>
+          <select id="eq-condition">
+            <option>Excellent</option>
+            <option>Good</option>
+            <option>Fair</option>
+            <option>Poor</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Description / Notes</label>
+        <textarea id="eq-notes" rows="2" placeholder="Optional notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('add-equipment-modal')">Cancel</button>
+      <button class="btn-primary" onclick="addEquipment()">Add Equipment</button>
+    </div>
+  </div>
+</div>
+
+<div id="add-borrow-modal" class="modal-overlay" onclick="closeModalOutside(event,'add-borrow-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>New Borrow Request</h3>
+      <button onclick="closeModal('add-borrow-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Teacher Name</label>
+        <input type="text" id="br-teacher" placeholder="e.g. Mr. Santos"/>
+      </div>
+      <div class="form-group">
+        <label>Equipment</label>
+        <select id="br-equipment"></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Quantity</label>
+          <input type="number" id="br-qty" value="1" min="1"/>
+        </div>
+        <div class="form-group">
+          <label>Purpose</label>
+          <input type="text" id="br-purpose" placeholder="e.g. PE Class, Tournament"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Borrow Date</label>
+          <input type="date" id="br-date"/>
+        </div>
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="br-due"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('add-borrow-modal')">Cancel</button>
+      <button class="btn-primary" onclick="addBorrowRequest()">Submit Request</button>
+    </div>
+  </div>
+</div>
+
+<div id="add-violation-modal" class="modal-overlay" onclick="closeModalOutside(event,'add-violation-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Manual Violation</h3>
+      <button onclick="closeModal('add-violation-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Teacher Name</label>
+        <input type="text" id="vio-teacher" placeholder="e.g. Ms. Cruz"/>
+      </div>
+      <div class="form-group">
+        <label>Equipment</label>
+        <input type="text" id="vio-equipment" placeholder="e.g. Volleyball Net"/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Due Date</label>
+          <input type="date" id="vio-due"/>
+        </div>
+        <div class="form-group">
+          <label>Penalty (₱)</label>
+          <input type="number" id="vio-penalty" value="50" min="0"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Remarks</label>
+        <textarea id="vio-remarks" rows="2" placeholder="Reason or notes..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('add-violation-modal')">Cancel</button>
+      <button class="btn-primary" onclick="addViolation()">Add Violation</button>
+    </div>
+  </div>
+</div>
+
+<div id="add-feedback-modal" class="modal-overlay" onclick="closeModalOutside(event,'add-feedback-modal')">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Submit Feedback / Report</h3>
+      <button onclick="closeModal('add-feedback-modal')" class="modal-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Submitted By</label>
+          <input type="text" id="fb-author" placeholder="e.g. Mr. Santos"/>
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="fb-type">
+            <option value="complaint">Complaint</option>
+            <option value="report">Report</option>
+            <option value="suggestion">Suggestion</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Subject</label>
+        <input type="text" id="fb-subject" placeholder="e.g. Damaged equipment"/>
+      </div>
+      <div class="form-group">
+        <label>Message</label>
+        <textarea id="fb-message" rows="4" placeholder="Describe your feedback or report in detail..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('add-feedback-modal')">Cancel</button>
+      <button class="btn-primary" onclick="addFeedback()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+let currentUser       = { username: 'admin', password: '123' };
+let equipment         = [];
+let borrows           = [];
+let violations        = [];
+let feedbacks         = [];
+let penaltyPerDay     = 50;
+let gracePeriod       = 1;
+let currentBorrowTab  = 'pending';
+let currentFeedbackTab = 'all';
+let analyticsFilter   = 'all';
+
+let freqChart   = null;
+let activeChart = null;
+let catChart    = null;
+
+const CHART_COLORS = [
+  '#7b1113','#2e7d32','#c62828','#2980b9','#8e44ad',
+  '#16a085','#e67e22','#2c3e50','#f39c12','#1abc9c'
+];
+
+// ─── PERSISTENCE ─────────────────────────────────────────
+function save() {
+  localStorage.setItem('sb_equipment',  JSON.stringify(equipment));
+  localStorage.setItem('sb_borrows',    JSON.stringify(borrows));
+  localStorage.setItem('sb_violations', JSON.stringify(violations));
+  localStorage.setItem('sb_feedbacks',  JSON.stringify(feedbacks));
+  localStorage.setItem('sb_user',       JSON.stringify(currentUser));
+  localStorage.setItem('sb_rules',      JSON.stringify({ penaltyPerDay, gracePeriod }));
+}
+
+function load() {
+  const eq = localStorage.getItem('sb_equipment');
+  const br = localStorage.getItem('sb_borrows');
+  const vi = localStorage.getItem('sb_violations');
+  const fb = localStorage.getItem('sb_feedbacks');
+  const us = localStorage.getItem('sb_user');
+  const ru = localStorage.getItem('sb_rules');
+  if (eq) equipment   = JSON.parse(eq);
+  if (br) borrows     = JSON.parse(br);
+  if (vi) violations  = JSON.parse(vi);
+  if (fb) feedbacks   = JSON.parse(fb);
+  if (us) currentUser = JSON.parse(us);
+  if (ru) {
+    const r = JSON.parse(ru);
+    penaltyPerDay = r.penaltyPerDay ?? 50;
+    gracePeriod   = r.gracePeriod   ?? 1;
+  }
+}
+
+// ─── AUTH ─────────────────────────────────────────────────
+function doLogin() {
+  const u = document.getElementById('login-user').value.trim();
+  const p = document.getElementById('login-pass').value;
+  const errEl = document.getElementById('login-error');
+  if (u === currentUser.username && p === currentUser.password) {
+    errEl.style.display = 'none';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('sidebar-username').textContent = currentUser.username;
+    document.getElementById('user-avatar-letter').textContent = currentUser.username[0].toUpperCase();
+    document.getElementById('settings-username').textContent = currentUser.username;
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+    document.getElementById('penalty-per-day').value = penaltyPerDay;
+    document.getElementById('grace-period').value     = gracePeriod;
+    refreshAll();
+  } else {
+    errEl.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    const ls = document.getElementById('login-screen');
+    if (ls && ls.style.display !== 'none') doLogin();
+  }
+});
+
+// ─── NAVIGATION ───────────────────────────────────────────
+const PAGE_TITLES = {
+  dashboard: 'Dashboard',
+  equipment: 'Equipment',
+  borrows:   'Borrow Requests',
+  violations:'Violations',
+  analytics: 'Analytics',
+  feedback:  'Feedback & Reports',
+  settings:  'Settings'
+};
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  if (el)   el.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[name] || name;
+  if (name === 'dashboard')  refreshDashboard();
+  if (name === 'equipment')  renderEquipmentTable();
+  if (name === 'borrows')    renderBorrowTable();
+  if (name === 'violations') renderViolationsTable();
+  if (name === 'analytics')  renderAnalytics();
+  if (name === 'feedback')   renderFeedbackTable();
+}
+
+// ─── MODALS ───────────────────────────────────────────────
+function openModal(id) {
+  if (id === 'add-borrow-modal') populateBorrowEquipmentSelect();
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e, id) { if (e.target.id === id) closeModal(id); }
+
+// ─── TOAST ────────────────────────────────────────────────
+let _toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => { t.style.display = 'none'; }, 3200);
+}
+
+// ─── HELPERS ──────────────────────────────────────────────
+function today() { return new Date().toISOString().slice(0, 10); }
+
+function daysOverdue(dueDateStr) {
+  const due = new Date(dueDateStr);
+  const now = new Date();
+  due.setHours(0,0,0,0);
+  now.setHours(0,0,0,0);
+  return Math.max(0, Math.floor((now - due) / 86400000));
+}
+
+function statusBadge(status) {
+  const map = {
+    pending:  '<span class="badge badge-yellow">Pending</span>',
+    approved: '<span class="badge badge-green">Approved</span>',
+    returned: '<span class="badge badge-gray">Returned</span>',
+    overdue:  '<span class="badge badge-red">Overdue</span>',
+    unpaid:   '<span class="badge badge-red">Unpaid</span>',
+    resolved: '<span class="badge badge-green">Resolved</span>',
+  };
+  return map[status] || `<span class="badge badge-gray">${status}</span>`;
+}
+
+function conditionBadge(c) {
+  const map = { Excellent:'badge-green', Good:'badge-gold', Fair:'badge-yellow', Poor:'badge-red' };
+  return `<span class="badge ${map[c] || 'badge-gray'}">${c}</span>`;
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function capitalize(str) {
+  return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+}
+
+function clearModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  m.querySelectorAll('input[type=text], input[type=number], textarea').forEach(el => {
+    if (el.id === 'eq-qty' || el.id === 'br-qty') el.value = 1;
+    else if (el.id === 'vio-penalty') el.value = penaltyPerDay;
+    else el.value = '';
+  });
+  m.querySelectorAll('input[type=date]').forEach(el => el.value = '');
+}
+
+// ─── EQUIPMENT ────────────────────────────────────────────
+function addEquipment() {
+  const name = document.getElementById('eq-name').value.trim();
+  if (!name) { showToast('⚠ Please enter an equipment name.'); return; }
+  const qty = Math.max(1, parseInt(document.getElementById('eq-qty').value) || 1);
+  equipment.push({
+    id: Date.now(), name,
+    category:  document.getElementById('eq-category').value,
+    qty, available: qty,
+    condition: document.getElementById('eq-condition').value,
+    notes:     document.getElementById('eq-notes').value.trim(),
+  });
+  save();
+  closeModal('add-equipment-modal');
+  clearModal('add-equipment-modal');
+  renderEquipmentTable();
+  refreshDashboard();
+  showToast('✅ Equipment added successfully.');
+}
+
+function deleteEquipment(id) {
+  if (!confirm('Delete this equipment? This cannot be undone.')) return;
+  equipment = equipment.filter(e => e.id !== id);
+  save(); renderEquipmentTable(); refreshDashboard();
+  showToast('🗑 Equipment deleted.');
+}
+
+function renderEquipmentTable() {
+  const q     = (document.getElementById('eq-search').value || '').toLowerCase();
+  const tbody = document.getElementById('equipment-table');
+  const list  = equipment.filter(e =>
+    e.name.toLowerCase().includes(q) || e.category.toLowerCase().includes(q)
+  );
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">
+      ${q ? 'No equipment matched your search.' : 'No equipment added yet. Click <strong>+ Add Equipment</strong> to get started.'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(e => `
+    <tr>
+      <td><strong>${esc(e.name)}</strong></td>
+      <td>${esc(e.category)}</td>
+      <td>${e.qty}</td>
+      <td style="color:${e.available > 0 ? 'var(--green)' : 'var(--red)'}; font-weight:600;">${e.available}</td>
+      <td>${conditionBadge(e.condition)}</td>
+      <td style="color:var(--muted); font-size:13px;">${esc(e.notes) || '—'}</td>
+      <td><button class="btn-action btn-delete" onclick="deleteEquipment(${e.id})">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+// ─── BORROWS ──────────────────────────────────────────────
+function populateBorrowEquipmentSelect() {
+  const sel   = document.getElementById('br-equipment');
+  const avail = equipment.filter(e => e.available > 0);
+  sel.innerHTML = avail.length
+    ? avail.map(e => `<option value="${e.id}">${esc(e.name)} (Available: ${e.available})</option>`).join('')
+    : '<option disabled selected>No equipment available right now</option>';
+}
+
+function addBorrowRequest() {
+  const teacher = document.getElementById('br-teacher').value.trim();
+  const eqId    = parseInt(document.getElementById('br-equipment').value);
+  const qty     = Math.max(1, parseInt(document.getElementById('br-qty').value) || 1);
+  const purpose = document.getElementById('br-purpose').value.trim();
+  const date    = document.getElementById('br-date').value;
+  const due     = document.getElementById('br-due').value;
+  if (!teacher)            { showToast('⚠ Please enter the teacher name.'); return; }
+  if (!eqId || isNaN(eqId)) { showToast('⚠ Please select equipment.'); return; }
+  if (!date || !due)       { showToast('⚠ Please fill in both dates.'); return; }
+  if (due < date)          { showToast('⚠ Due date cannot be before borrow date.'); return; }
+  const eq = equipment.find(e => e.id === eqId);
+  if (!eq) { showToast('⚠ Selected equipment not found.'); return; }
+  if (qty > eq.available) { showToast(`⚠ Only ${eq.available} unit(s) available.`); return; }
+  borrows.push({
+    id: Date.now(), teacher,
+    equipmentId: eqId, equipmentName: eq.name,
+    category: eq.category, qty, purpose,
+    borrowDate: date, dueDate: due, status: 'pending',
+  });
+  save();
+  closeModal('add-borrow-modal');
+  clearModal('add-borrow-modal');
+  renderBorrowTable(); refreshDashboard();
+  showToast('✅ Borrow request submitted.');
+}
+
+function switchBorrowTab(tab, el) {
+  currentBorrowTab = tab;
+  document.querySelectorAll('#page-borrows .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderBorrowTable();
+}
+
+function renderBorrowTable() {
+  const list  = borrows.filter(b => b.status === currentBorrowTab);
+  const tbody = document.getElementById('borrow-table');
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:28px">
+      No <strong>${currentBorrowTab}</strong> requests.</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(b => `
+    <tr>
+      <td>${esc(b.teacher)}</td>
+      <td>${esc(b.equipmentName)}</td>
+      <td>${b.qty}</td>
+      <td>${esc(b.purpose) || '—'}</td>
+      <td>${b.borrowDate}</td>
+      <td>${b.dueDate}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td>${borrowActions(b)}</td>
+    </tr>
+  `).join('');
+}
+
+function borrowActions(b) {
+  if (b.status === 'pending')
+    return `<button class="btn-action btn-approve" onclick="approveBorrow(${b.id})">Approve</button>
+            <button class="btn-action btn-delete"  onclick="rejectBorrow(${b.id})">Reject</button>`;
+  if (b.status === 'approved')
+    return `<button class="btn-action btn-return" onclick="returnBorrow(${b.id})">Mark Returned</button>`;
+  return `<button class="btn-action btn-delete" onclick="deleteBorrow(${b.id})">Delete</button>`;
+}
+
+function approveBorrow(id) {
+  const b  = borrows.find(x => x.id === id);
+  if (!b) return;
+  const eq = equipment.find(e => e.id === b.equipmentId);
+  if (eq) {
+    if (b.qty > eq.available) { showToast(`⚠ Only ${eq.available} unit(s) available now.`); return; }
+    eq.available = Math.max(0, eq.available - b.qty);
+  }
+  b.status = 'approved';
+  save(); renderBorrowTable(); refreshDashboard();
+  showToast('✅ Request approved.');
+}
+
+function rejectBorrow(id) {
+  if (!confirm('Reject and remove this borrow request?')) return;
+  borrows = borrows.filter(b => b.id !== id);
+  save(); renderBorrowTable(); refreshDashboard();
+  showToast('🗑 Request rejected.');
+}
+
+function returnBorrow(id) {
+  const b  = borrows.find(x => x.id === id);
+  if (!b) return;
+  const eq = equipment.find(e => e.id === b.equipmentId);
+  if (eq) eq.available = Math.min(eq.qty, eq.available + b.qty);
+  b.status = 'returned';
+  save(); renderBorrowTable(); refreshDashboard();
+  showToast('✅ Equipment marked as returned.');
+}
+
+function deleteBorrow(id) {
+  if (!confirm('Delete this borrow record?')) return;
+  borrows = borrows.filter(b => b.id !== id);
+  save(); renderBorrowTable();
+  showToast('🗑 Borrow record deleted.');
+}
+
+// ─── VIOLATIONS ───────────────────────────────────────────
+function addViolation() {
+  const teacher = document.getElementById('vio-teacher').value.trim();
+  const eq      = document.getElementById('vio-equipment').value.trim();
+  const due     = document.getElementById('vio-due').value;
+  const penalty = parseFloat(document.getElementById('vio-penalty').value) || 0;
+  const remarks = document.getElementById('vio-remarks').value.trim();
+  if (!teacher || !eq || !due) { showToast('⚠ Please fill in all required fields.'); return; }
+  violations.push({
+    id: Date.now(), teacher, equipment: eq, dueDate: due,
+    daysOverdue: daysOverdue(due), penalty, remarks,
+    status: 'unpaid', manual: true,
+  });
+  save();
+  closeModal('add-violation-modal');
+  clearModal('add-violation-modal');
+  renderViolationsTable(); refreshDashboard();
+  showToast('✅ Violation added.');
+}
+
+function resolveViolation(id) {
+  const v = violations.find(x => x.id === id);
+  if (v) v.status = 'resolved';
+  save(); renderViolationsTable(); refreshDashboard();
+  showToast('✅ Violation resolved.');
+}
+
+function deleteViolation(id) {
+  if (!confirm('Delete this violation?')) return;
+  violations = violations.filter(v => v.id !== id);
+  save(); renderViolationsTable(); refreshDashboard();
+  showToast('🗑 Violation deleted.');
+}
+
+function renderViolationsTable() {
+  const tbody = document.getElementById('violations-table');
+  violations.forEach(v => { v.daysOverdue = daysOverdue(v.dueDate); });
+  if (!violations.length) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:28px">
+      No violations recorded. Click <strong>+ Add Violation</strong> or run <strong>Check Overdues</strong>.</td></tr>`;
+    updateViolationBadge(); return;
+  }
+  tbody.innerHTML = violations.map(v => `
+    <tr>
+      <td>${esc(v.teacher)}</td>
+      <td>${esc(v.equipment)}</td>
+      <td>${v.dueDate}</td>
+      <td style="color:${v.daysOverdue > 0 ? 'var(--red)' : 'var(--muted)'}; font-weight:600;">${v.daysOverdue} day(s)</td>
+      <td style="color:var(--gold-dark); font-weight:700;">₱${Number(v.penalty).toFixed(2)}</td>
+      <td style="font-size:13px; color:var(--muted);">${esc(v.remarks) || '—'}</td>
+      <td>${statusBadge(v.status)}</td>
+      <td>
+        ${v.status !== 'resolved' ? `<button class="btn-action btn-resolve" onclick="resolveViolation(${v.id})">Resolve</button>` : ''}
+        <button class="btn-action btn-delete" onclick="deleteViolation(${v.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+  updateViolationBadge();
+}
+
+function updateViolationBadge() {
+  const unpaid = violations.filter(v => v.status === 'unpaid').length;
+  const badge  = document.getElementById('vio-badge');
+  badge.textContent = unpaid;
+  badge.classList.toggle('show', unpaid > 0);
+  document.getElementById('stat-overdue').textContent = unpaid;
+}
+
+function runViolationCheck() {
+  let created = 0;
+  borrows.filter(b => b.status === 'approved').forEach(b => {
+    const days = daysOverdue(b.dueDate);
+    if (days > gracePeriod) {
+      const exists = violations.some(v => v.borrowId === b.id && v.status !== 'resolved');
+      if (!exists) {
+        violations.push({
+          id: Date.now() + Math.random(), borrowId: b.id,
+          teacher: b.teacher, equipment: b.equipmentName,
+          dueDate: b.dueDate, daysOverdue: days,
+          penalty: days * penaltyPerDay,
+          remarks: 'Auto-detected overdue', status: 'unpaid', manual: false,
+        });
+        created++;
+      }
+    }
+  });
+  save(); refreshDashboard(); renderViolationsTable();
+  showToast(created > 0 ? `⚠ ${created} new overdue violation(s) detected.` : '✅ No new overdues found.');
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────
+function refreshDashboard() {
+  const totalEq  = equipment.reduce((s, e) => s + e.qty, 0);
+  const borrowed = borrows.filter(b => b.status === 'approved').reduce((s, b) => s + b.qty, 0);
+  const avail    = equipment.reduce((s, e) => s + e.available, 0);
+  const unpaid   = violations.filter(v => v.status === 'unpaid').length;
+  document.getElementById('stat-total').textContent     = totalEq;
+  document.getElementById('stat-borrowed').textContent  = borrowed;
+  document.getElementById('stat-overdue').textContent   = unpaid;
+  document.getElementById('stat-available').textContent = avail;
+  updateViolationBadge();
+  updateFeedbackBadge();
+  const recent = [...borrows].reverse().slice(0, 10);
+  const tbody  = document.getElementById('recent-activity-table');
+  tbody.innerHTML = recent.length
+    ? recent.map(b => `
+        <tr>
+          <td>${esc(b.teacher)}</td><td>${esc(b.equipmentName)}</td>
+          <td>${b.borrowDate}</td><td>${b.dueDate}</td>
+          <td>${statusBadge(b.status)}</td>
+        </tr>`).join('')
+    : `<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:24px">No activity yet.</td></tr>`;
+  const overdues = violations.filter(v => v.status === 'unpaid');
+  const cont     = document.getElementById('overdue-warn-container');
+  cont.innerHTML = overdues.length
+    ? overdues.slice(0, 5).map(v => `
+        <div class="warn-banner">
+          ⚠ <span><strong>${esc(v.teacher)}</strong> — ${esc(v.equipment)} is overdue by
+          <strong>${v.daysOverdue} day(s)</strong>. Penalty: <strong>₱${Number(v.penalty).toFixed(2)}</strong></span>
+        </div>`).join('')
+    : '';
+}
+
+// ─── FEEDBACK ─────────────────────────────────────────────
+function addFeedback() {
+  const author  = document.getElementById('fb-author').value.trim();
+  const type    = document.getElementById('fb-type').value;
+  const subject = document.getElementById('fb-subject').value.trim();
+  const message = document.getElementById('fb-message').value.trim();
+  if (!author || !subject || !message) { showToast('⚠ Please fill in all fields.'); return; }
+  feedbacks.unshift({
+    id:      Date.now(),
+    date:    new Date().toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' }),
+    author, type, subject, message, status: 'unread',
+  });
+  save();
+  closeModal('add-feedback-modal');
+  clearModal('add-feedback-modal');
+  renderFeedbackTable();
+  updateFeedbackBadge();
+  showToast('✅ Feedback submitted.');
+}
+
+function switchFeedbackTab(tab, el) {
+  currentFeedbackTab = tab;
+  document.querySelectorAll('#page-feedback .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderFeedbackTable();
+}
+
+function renderFeedbackTable() {
+  const tbody = document.getElementById('feedback-table');
+  if (!tbody) return;
+  const list = currentFeedbackTab === 'all'
+    ? feedbacks
+    : feedbacks.filter(f => f.type === currentFeedbackTab);
+  if (!list.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:28px">
+      No feedback found. Click <strong>+ Submit Feedback</strong> to add one.</td></tr>`;
+    return;
+  }
+  const typeColors = { complaint:'badge-red', report:'badge-yellow', suggestion:'badge-green' };
+  tbody.innerHTML = list.map(f => `
+    <tr style="${f.status === 'unread' ? 'font-weight:600;' : ''}">
+      <td style="white-space:nowrap; color:var(--muted); font-size:13px;">${esc(f.date)}</td>
+      <td>${esc(f.author)}</td>
+      <td><span class="badge ${typeColors[f.type] || 'badge-gray'}">${capitalize(f.type)}</span></td>
+      <td>${esc(f.subject)}</td>
+      <td style="font-size:13px; color:var(--muted);">
+        <span class="feedback-message-preview" title="${esc(f.message)}">${esc(f.message)}</span>
+      </td>
+      <td>
+        <span class="badge ${f.status === 'unread' ? 'badge-gold' : 'badge-gray'}">
+          ${f.status === 'unread' ? 'Unread' : 'Read'}
+        </span>
+      </td>
+      <td>
+        ${f.status === 'unread' ? `<button class="btn-action btn-resolve" onclick="markFeedbackRead(${f.id})">Mark Read</button>` : ''}
+        <button class="btn-action btn-delete" onclick="deleteFeedback(${f.id})">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+  updateFeedbackBadge();
+}
+
+function markFeedbackRead(id) {
+  const f = feedbacks.find(x => x.id === id);
+  if (f) f.status = 'read';
+  save(); renderFeedbackTable(); updateFeedbackBadge();
+  showToast('✅ Marked as read.');
+}
+
+function deleteFeedback(id) {
+  if (!confirm('Delete this feedback?')) return;
+  feedbacks = feedbacks.filter(f => f.id !== id);
+  save(); renderFeedbackTable(); updateFeedbackBadge();
+  showToast('🗑 Feedback deleted.');
+}
+
+function updateFeedbackBadge() {
+  const unread = feedbacks.filter(f => f.status === 'unread').length;
+  const badge  = document.getElementById('feedback-badge');
+  if (!badge) return;
+  badge.textContent = unread;
+  badge.classList.toggle('show', unread > 0);
+}
+
+// ─── SETTINGS ─────────────────────────────────────────────
+function saveCredentials() {
+  const newU  = document.getElementById('new-username').value.trim();
+  const currP = document.getElementById('curr-pass').value;
+  const newP  = document.getElementById('new-pass').value;
+  const confP = document.getElementById('confirm-pass').value;
+  const msgEl = document.getElementById('settings-msg');
+  function showMsg(type, text) {
+    msgEl.className = `settings-msg ${type}`;
+    msgEl.textContent = text;
+    msgEl.style.display = 'block';
+    setTimeout(() => { msgEl.style.display = 'none'; }, 3500);
+  }
+  if (!currP) { showMsg('error', 'Please enter your current password.'); return; }
+  if (currP !== currentUser.password) { showMsg('error', 'Current password is incorrect.'); return; }
+  if (newP && newP !== confP) { showMsg('error', 'New passwords do not match.'); return; }
+  if (newP && newP.length < 3) { showMsg('error', 'New password must be at least 3 characters.'); return; }
+  if (newU) currentUser.username = newU;
+  if (newP) currentUser.password = newP;
+  save();
+  document.getElementById('sidebar-username').textContent = currentUser.username;
+  document.getElementById('user-avatar-letter').textContent = currentUser.username[0].toUpperCase();
+  document.getElementById('settings-username').textContent  = currentUser.username;
+  showMsg('success', '✅ Credentials updated successfully.');
+  document.getElementById('curr-pass').value    = '';
+  document.getElementById('new-pass').value     = '';
+  document.getElementById('confirm-pass').value = '';
+}
+
+function saveViolationRules() {
+  penaltyPerDay = parseFloat(document.getElementById('penalty-per-day').value) || 50;
+  gracePeriod   = parseInt(document.getElementById('grace-period').value)      || 1;
+  if (penaltyPerDay < 0) penaltyPerDay = 0;
+  if (gracePeriod   < 0) gracePeriod   = 0;
+  save();
+  showToast('✅ Violation rules saved.');
+}
+
+// ─── ANALYTICS ────────────────────────────────────────────
+function setAnalyticsFilter(f, el) {
+  analyticsFilter = f;
+  document.querySelectorAll('.analytics-filter-row .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderAnalytics();
+}
+
+function getFilteredBorrows() {
+  if (analyticsFilter === 'all') return borrows;
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate() - parseInt(analyticsFilter));
+  return borrows.filter(b => new Date(b.borrowDate) >= cutoff);
+}
+
+function buildFreqData(br) {
+  const map = {};
+  br.forEach(b => { map[b.equipmentName] = (map[b.equipmentName] || 0) + 1; });
+  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  return { labels: sorted.map(x => x[0]), data: sorted.map(x => x[1]) };
+}
+
+function buildActiveData(br) {
+  const active = br.filter(b => b.status === 'approved');
+  const map    = {};
+  active.forEach(b => { map[b.equipmentName] = (map[b.equipmentName] || 0) + (b.qty || 1); });
+  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]).slice(0, 7);
+  return { labels: sorted.map(x => x[0]), data: sorted.map(x => x[1]) };
+}
+
+function buildCatData(br) {
+  const map = {};
+  br.forEach(b => { if (b.category) map[b.category] = (map[b.category] || 0) + 1; });
+  const sorted = Object.entries(map).sort((a, b) => b[1] - a[1]);
+  return { labels: sorted.map(x => x[0]), data: sorted.map(x => x[1]) };
+}
+
+function makeLegend(containerId, labels, colors) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = labels.map((l, i) =>
+    `<span class="chart-legend-item">
+       <span class="chart-legend-dot" style="background:${colors[i % colors.length]}"></span>${esc(l)}
+     </span>`
+  ).join('');
+}
+
+function destroyChart(ref) {
+  if (ref) { try { ref.destroy(); } catch (_) {} }
+  return null;
+}
+
+function emptyCanvas(canvas, msg) {
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#999';
+  ctx.font = '13px DM Sans, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(msg, canvas.width / 2, canvas.height / 2);
+}
+
+function renderAnalytics() {
+  const br      = getFilteredBorrows();
+  const total   = br.length;
+  const active  = br.filter(b => b.status === 'approved').length;
+  const freq    = buildFreqData(br);
+  const topItem = freq.labels[0] || '—';
+  const avgDays = br.length
+    ? br.reduce((s, b) => {
+        if (!b.borrowDate || !b.dueDate) return s;
+        return s + Math.max(0, (new Date(b.dueDate) - new Date(b.borrowDate)) / 86400000);
+      }, 0) / br.length
+    : 0;
+
+  document.getElementById('a-total').textContent  = total;
+  document.getElementById('a-active').textContent = active;
+  document.getElementById('a-top').textContent    = topItem;
+  document.getElementById('a-avg').textContent    = Math.round(avgDays);
+
+  const activeData  = buildActiveData(br);
+  const catData     = buildCatData(br);
+  const gridColor   = 'rgba(0,0,0,0.06)';
+  const textColor   = '#777777';
+  const borderColor = '#e0e0e0';
+
+  freqChart   = destroyChart(freqChart);
+  activeChart = destroyChart(activeChart);
+  catChart    = destroyChart(catChart);
+
+  const freqCanvas = document.getElementById('freqChart');
+  if (freqCanvas) {
+    if (freq.labels.length) {
+      freqChart = new Chart(freqCanvas, {
+        type: 'bar',
+        data: {
+          labels: freq.labels,
+          datasets: [{
+            label: 'Times borrowed',
+            data:  freq.data,
+            backgroundColor: CHART_COLORS.map(c => c + 'bb'),
+            borderColor:     CHART_COLORS,
+            borderWidth: 1.5, borderRadius: 6,
+            hoverBackgroundColor: CHART_COLORS,
+          }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: textColor, font: { size: 11 }, maxRotation: 35 }, grid: { color: gridColor }, border: { color: borderColor } },
+            y: { ticks: { color: textColor, font: { size: 11 }, stepSize: 1, precision: 0 }, grid: { color: gridColor }, border: { color: borderColor }, beginAtZero: true }
+          }
+        }
+      });
+      makeLegend('freq-legend', freq.labels, CHART_COLORS);
+    } else {
+      emptyCanvas(freqCanvas, 'No borrow data available yet.');
+      const fl = document.getElementById('freq-legend');
+      if (fl) fl.innerHTML = '';
+    }
+  }
+
+  const activeCanvas = document.getElementById('activeChart');
+  if (activeCanvas) {
+    if (activeData.labels.length) {
+      const dColors = activeData.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]);
+      activeChart = new Chart(activeCanvas, {
+        type: 'doughnut',
+        data: {
+          labels: activeData.labels,
+          datasets: [{ data: activeData.data, backgroundColor: dColors.map(c => c + 'bb'), borderColor: dColors, borderWidth: 2, hoverOffset: 8 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { display: false } } }
+      });
+      makeLegend('active-legend', activeData.labels, CHART_COLORS);
+    } else {
+      emptyCanvas(activeCanvas, 'No active borrows right now.');
+      const al = document.getElementById('active-legend');
+      if (al) al.innerHTML = '';
+    }
+  }
+
+  const catCanvas = document.getElementById('catChart');
+  if (catCanvas) {
+    if (catData.labels.length) {
+      catChart = new Chart(catCanvas, {
+        type: 'bar',
+        data: {
+          labels: catData.labels,
+          datasets: [{
+            label: 'Borrows', data: catData.data,
+            backgroundColor: catData.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length] + 'bb'),
+            borderColor:     catData.labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]),
+            borderWidth: 1.5, borderRadius: 6,
+          }]
+        },
+        options: {
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { color: textColor, font: { size: 11 }, precision: 0 }, grid: { color: gridColor }, border: { color: borderColor }, beginAtZero: true },
+            y: { ticks: { color: textColor, font: { size: 11 } }, grid: { color: gridColor }, border: { color: borderColor } }
+          }
+        }
+      });
+    } else {
+      emptyCanvas(catCanvas, 'No category data available yet.');
+    }
+  }
+}
+
+// ─── REFRESH ALL ──────────────────────────────────────────
+function refreshAll() {
+  refreshDashboard();
+  renderEquipmentTable();
+  renderBorrowTable();
+  renderViolationsTable();
+  renderFeedbackTable();
+}
+
+// ─── SEED DATA ────────────────────────────────────────────
+function seedSampleData() {
+  const todayDate = new Date();
+  const daysAgo = (n) => {
+    const d = new Date(todayDate);
+    d.setDate(d.getDate() - n);
+    return d.toISOString().slice(0, 10);
+  };
+  equipment = [
+    { id:1001, name:'Basketball',                   category:'Ball Sports',   qty:10, available:5, condition:'Excellent', notes:'Official size 7' },
+    { id:1002, name:'Volleyball',                   category:'Ball Sports',   qty:8,  available:4, condition:'Excellent', notes:'' },
+    { id:1003, name:'Volleyball Net',               category:'Team Sports',   qty:3,  available:2, condition:'Good',      notes:'Standard regulation net' },
+    { id:1004, name:'Badminton Racket',             category:'Racket Sports', qty:12, available:6, condition:'Good',      notes:'' },
+    { id:1005, name:'Badminton Shuttlecock (box)',  category:'Racket Sports', qty:6,  available:6, condition:'Excellent', notes:'12 pcs per box' },
+    { id:1006, name:'Jump Rope',                    category:'Fitness',       qty:15, available:7, condition:'Good',      notes:'' },
+    { id:1007, name:'Soccer Ball',                  category:'Ball Sports',   qty:5,  available:5, condition:'Fair',      notes:'Some wear on surface' },
+    { id:1008, name:'Stopwatch',                    category:'Athletics',     qty:4,  available:2, condition:'Excellent', notes:'Digital, waterproof' },
+  ];
+  borrows = [
+    { id:2001, teacher:'Mr. Santos',    equipmentId:1001, equipmentName:'Basketball',    category:'Ball Sports',   qty:5, purpose:'PE Class',        borrowDate:daysAgo(13), dueDate:daysAgo(6),  status:'approved' },
+    { id:2002, teacher:'Ms. Cruz',      equipmentId:1002, equipmentName:'Volleyball',    category:'Ball Sports',   qty:4, purpose:'Intramurals',      borrowDate:daysAgo(11), dueDate:daysAgo(4),  status:'approved' },
+    { id:2003, teacher:'Mr. Reyes',     equipmentId:1004, equipmentName:'Badminton Racket', category:'Racket Sports', qty:6, purpose:'PE Class',     borrowDate:daysAgo(8),  dueDate:daysAgo(1),  status:'approved' },
+    { id:2004, teacher:'Ms. Lim',       equipmentId:1006, equipmentName:'Jump Rope',     category:'Fitness',       qty:8, purpose:'Fitness Training', borrowDate:daysAgo(5),  dueDate:daysAgo(2),  status:'pending' },
+    { id:2005, teacher:'Mr. Garcia',    equipmentId:1007, equipmentName:'Soccer Ball',   category:'Ball Sports',   qty:3, purpose:'Training Session', borrowDate:daysAgo(18), dueDate:daysAgo(11), status:'returned' },
+    { id:2006, teacher:'Ms. Torres',    equipmentId:1003, equipmentName:'Volleyball Net',category:'Team Sports',   qty:1, purpose:'Tournament',       borrowDate:daysAgo(23), dueDate:daysAgo(16), status:'approved' },
+    { id:2007, teacher:'Mr. Dela Cruz', equipmentId:1008, equipmentName:'Stopwatch',     category:'Athletics',     qty:2, purpose:'Track & Field',    borrowDate:daysAgo(21), dueDate:daysAgo(13), status:'approved' },
+  ];
+  violations = [
+    { id:3001, borrowId:2006, teacher:'Ms. Torres',    equipment:'Volleyball Net', dueDate:daysAgo(16), daysOverdue:16, penalty:800, remarks:'Auto-detected overdue', status:'unpaid', manual:false },
+    { id:3002, borrowId:2007, teacher:'Mr. Dela Cruz', equipment:'Stopwatch',      dueDate:daysAgo(13), daysOverdue:13, penalty:650, remarks:'Auto-detected overdue', status:'unpaid', manual:false },
+  ];
+  feedbacks = [
+    { id:4001, date:'May 10, 2026', author:'Mr. Santos',    type:'complaint',   subject:'Damaged Basketball',        message:'One of the returned basketballs has a puncture and needs to be replaced.',     status:'unread' },
+    { id:4002, date:'May 9, 2026',  author:'Ms. Cruz',      type:'report',      subject:'Missing Shuttlecocks',      message:'Box #3 of shuttlecocks is missing 4 pieces after the last tournament.',       status:'unread' },
+    { id:4003, date:'May 7, 2026',  author:'Mr. Reyes',     type:'suggestion',  subject:'Add More Badminton Rackets',message:'We often run short on rackets during PE. Suggest adding 6 more to inventory.', status:'read'   },
+  ];
+  save();
+  localStorage.setItem('sb_seeded', '1');
+}
+
+// ─── INIT ─────────────────────────────────────────────────
+load();
+if (!localStorage.getItem('sb_seeded')) { seedSampleData(); load(); }
+</script>
+</body>
+</html>

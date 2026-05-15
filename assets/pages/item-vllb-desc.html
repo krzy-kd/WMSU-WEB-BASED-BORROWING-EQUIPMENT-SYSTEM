@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EBS - Item Detail</title>
+    <link rel="stylesheet" href="/assets/styles/items-description.css">
+</head>
+<body>
+
+    <nav id="TopBar" class="nav-bar">
+    <div class="nav-left">
+        <img src="/assets/images/684271049_1441984574282179_3467844199188568396_n.png"  class="logo-img">
+        
+        
+    </div>
+
+    <ul class="nav-links">
+        <li><a href="home-page.html">HOME</a></li>
+        <li><a href="browse-page-2.html">BROWSE</a></li>
+        <li><a href="request-new.html">MY REQ</a></li>
+        <li><a href="history.html">HISTORY</a></li>
+    </ul>
+
+    <div class="nav-right">
+        <div class="profile-btn">
+            <span class="user-icon"><a href="user-profile.html">👤</a></span>
+        </div>
+    </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-flex">
+            <h1>BROWSE ITEMS</h1>
+            <div class="cat-group">
+                <button class="cat-btn active">🏀 SPORTS EQUIPMENT</button>
+                <button class="cat-btn">🔗 ELECTRONICS AND WIRES</button>
+                <button class="cat-btn">⛳ OTHERS</button>
+            </div>
+        </div>
+        <p>EXPLORE AVAILABLE EQUIPMENT AND RESOURCES THAT CAN BE BORROWED WITHIN THE UNIVERSITY.</p>
+    </header>
+
+    <main class="main-container">
+        <h1 class="breadcrumb">
+            <a class="sports" href="browse-page.html">Sports Equipments >
+            </a><span><a href="volleyball-page.html"> VolleyBall</a></span>
+        </h1>
+
+        <div class="content-flex">
+            <section class="left-col">
+                <div class="image-card">
+                    <p class="item-tag">ITEM ID: SPT002</p>
+                    <div class="image-viewport">
+                        <img id="main-target" src="/assets/images/WMSU-SHS.jpg" alt="">
+                    </div>
+                </div>
+            </section>
+
+            <section class="right-col">
+                <div class="top-group">
+                    <div class="preview-area">
+                        <p class="preview-label">item photo preview:</p>
+                        <div class="thumb-row" id="thumbnail-container">
+                            <img src="/assets/images/8470cfcd-c852-453d-8b7c-73503a5edfee.jpg" class="thumb thumb-img" alt="Preview 1">
+                            <img src="/assets/images/ba61b452-2e1b-4080-901c-7085a328456a.jpg" class="thumb thumb-img" alt="Preview 2">
+                            <img src="/assets/images/ba61b452-2e1b-4080-901c-7085a328456a.jpg" class="thumb thumb-img" alt="Preview 3">
+                        </div>
+                    </div>
+                    <table class="details-table">
+                        <tr><td class="label">ITEM NAME:</td><td class="val">Volleyball</td></tr>
+                        <tr><td class="label">CATEGORY:</td><td class="val">Sports Equipment > Basketball</td></tr>
+                        <tr><td class="label">STATUS BADGE:</td><td class="val"><span class="status-warn">⛔</span>Unavailable</td></tr>
+                        <tr><td class="label">CONDITION:</td><td class="val">Good</td></tr>
+                    </table>
+                </div>
+
+                <div class="foot-group">
+                    <p class="description">
+                        Official-size basketball designed for sports activities, training sessions, and university events.
+                    </p>
+                    <div class="action-row">
+                        <button class="btn-red">Browse Item</button>
+                        <button class="btn-white" id="fav-btn">
+                            <span class="heart-icon">♥</span> Favorite Item
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/assets/Javascripts/favorites.js"></script>
+    <script src="/assets/Javascripts/browse.js"></script>
+</body>
+</html>
